@@ -16,6 +16,6 @@ describe('User', () => {
 	})
 
 	it('should have a roles array', async () => {
-		expect(await ExampleUser.roles() instanceof Array).toBeTruthy()
+		expect((await ExampleUser.roles()) instanceof Array).toBeTruthy()
 	})
 })

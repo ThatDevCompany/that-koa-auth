@@ -22,9 +22,7 @@ describe('Context', () => {
 		const ctx = { headers: {}, query: {}, uctx: null }
 		const next = jasmine.createSpy('next')
 		const context = {}
-		spyOn(utils, 'authenticateToken')
-			.and
-			.returnValue(Promise.resolve(context))
+		spyOn(utils, 'authenticateToken').and.returnValue(Promise.resolve(context))
 		await test(ctx, next)
 		expect(ctx.uctx).toBeDefined()
 		expect(ctx.uctx).toBe(context)

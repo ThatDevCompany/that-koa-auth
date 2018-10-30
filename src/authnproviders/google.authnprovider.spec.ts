@@ -1,5 +1,5 @@
 import { GoogleAuthNProvider } from './google.authnprovider'
-import {AuthError} from "@/errors";
+import { AuthError } from '@/errors'
 
 /**
  * Tests for GoogleAuthNProvider
@@ -16,7 +16,7 @@ describe('GoogleAuthNProvider', () => {
 		try {
 			expect(new GoogleAuthNProvider(null).authenticate(null)).toThrowError()
 			expect(false).toBeTruthy()
-		} catch(e) {
+		} catch (e) {
 			expect(true).toBeTruthy()
 			expect(e.status).toBe(401)
 		}

@@ -1,6 +1,6 @@
 import { CognitoAuthNProvider } from './cognito.authnprovider'
-import {FacebookAuthNProvider} from "@/authnproviders/facebook.authnprovider";
-import {AuthError} from "@/errors";
+import { FacebookAuthNProvider } from '@/authnproviders/facebook.authnprovider'
+import { AuthError } from '@/errors'
 
 /**
  * Tests for CognitoAuthNProvider
@@ -17,7 +17,7 @@ describe('CognitoAuthNProvider', () => {
 		try {
 			new CognitoAuthNProvider(null).authenticate(null)
 			expect(false).toBeTruthy()
-		} catch(e) {
+		} catch (e) {
 			expect(true).toBeTruthy()
 			expect(e.status).toBe(401)
 		}

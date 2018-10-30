@@ -1,6 +1,6 @@
 import { SecureMethod } from './securemethod.decorator'
 import * as utils from '../utils'
-import {AuthError} from "@/errors";
+import { AuthError } from '@/errors'
 
 /**
  * Tests for SecureMethod
@@ -21,20 +21,18 @@ describe('SecureMethod', () => {
 		const target = null
 		const propertyKey = 'test'
 		const value = () => {}
-		const descriptor = {value}
+		const descriptor = { value }
 		SecureMethod(null, null)(target, propertyKey, descriptor)
 		expect(descriptor.value != value).toBeTruthy()
 	})
 
 	it('should call original method if authorize ok', async () => {
-		const s = spyOn(utils, 'authorize')
-			.and
-			.returnValue(Promise.resolve(true))
+		const s = spyOn(utils, 'authorize').and.returnValue(Promise.resolve(true))
 		const target = null
 		const propertyKey = 'test'
 		const fired = false
 		const value = jasmine.createSpy('value')
-		const descriptor = {value}
+		const descriptor = { value }
 		await SecureMethod(null, null)(target, propertyKey, descriptor)
 		await descriptor.value(null)
 		expect(s.calls.count()).toBe(1)
@@ -42,19 +40,17 @@ describe('SecureMethod', () => {
 	})
 
 	it('should throw AuthError if authorize failed', async () => {
-		const s = spyOn(utils, 'authorize')
-			.and
-			.returnValue(Promise.resolve(false))
+		const s = spyOn(utils, 'authorize').and.returnValue(Promise.resolve(false))
 		const target = null
 		const propertyKey = 'test'
 		const fired = false
 		const value = jasmine.createSpy('value')
-		const descriptor = {value}
+		const descriptor = { value }
 		await SecureMethod(null, null)(target, propertyKey, descriptor)
 		try {
 			await descriptor.value(null)
 			expect(false).toBeTruthy()
-		} catch(e) {
+		} catch (e) {
 			expect(true).toBeTruthy()
 			expect(e.status).toBe(401)
 		}

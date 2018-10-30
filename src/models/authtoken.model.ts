@@ -14,5 +14,7 @@ export const ExampleAuthToken: AuthToken = {
 	userId: '123',
 	tenantId: '123',
 
-	isValid() { return true }
+	isValid() {
+		return true
+	}
 }

@@ -18,18 +18,18 @@ export class Context {
 		public userId?: string,
 		public tenantId?: string
 	) {
-		assert(type != ContextType.USER || userId, 'UserID missing', arguments)
+		assert(type != ContextType.USER || userId, 'UserID missing in Context')
 	}
 
 	get isGuest() {
-		return (this.type === ContextType.GUEST)
+		return this.type === ContextType.GUEST
 	}
 
 	get isUser() {
-		return (this.type === ContextType.USER)
+		return this.type === ContextType.USER
 	}
 
 	get isSystem() {
-		return (this.type === ContextType.SYSTEM)
+		return this.type === ContextType.SYSTEM
 	}
 }

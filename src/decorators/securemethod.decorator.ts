@@ -29,10 +29,10 @@ export function SecureMethod(
 		descriptor.value = async function(uctx: Context, ...args) {
 			// Perform Authorization
 			if (!(await authorize(SecurityDAO, uctx, permissions))) {
-				throw new AuthError(
-					'Unauthorized attempt to call ' + propertyKey,
-					arguments
-				)
+				throw new AuthError('Unauthorized attempt to call ' + propertyKey, {
+					uctx,
+					...args
+				})
 			}
 			return originalMethod.apply(this, [uctx].concat(args))
 		}

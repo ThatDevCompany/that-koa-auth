@@ -23,17 +23,17 @@ export class BasicAuthNProvider extends AuthNProvider {
 
 			// Catch any Errors
 		} catch (err) {
-			throw new AuthError('Unexpected Error', { arguments, err })
+			throw new AuthError('Unexpected Error', { credentials, err })
 		}
 
 		// Was the User found?
 		if (!user) {
-			throw new AuthError('User not found', arguments)
+			throw new AuthError('User not found', credentials)
 		}
 
 		// Does the User's password match?
 		if (!(await user.passkeyMatches(credentials.passkey))) {
-			throw new AuthError('passkey did not match', arguments)
+			throw new AuthError('passkey did not match', credentials)
 		}
 
 		// We are authenticated

@@ -8,8 +8,8 @@ export function authenticateToken(
 	token: string
 ): Promise<Context> {
 	// Null safety
-	assert(SecurityDAO, 'Missing parameter SecurityDAO', arguments)
-	assert(token, 'Missing parameter token', arguments)
+	assert(SecurityDAO, 'authenticateToken - missing parameter SecurityDAO')
+	assert(token, 'authenticateToken - missing parameter token')
 
 	// Find Auth Token
 	return SecurityDAO.findAuthTokenById(token).then(authToken => {
