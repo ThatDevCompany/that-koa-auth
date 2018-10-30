@@ -22,12 +22,10 @@ module.exports = Promise.resolve()
 			'--statements', 80,
 			'--per-file',
 			'--extension', '.ts',
-			'--exclude', "src/Interfaces.ts",
 			'--exclude', "src/index.ts",
+			'--exclude', "src/**/index.ts",
 			'--exclude', 'src/*.spec.ts',
 			'--exclude', 'src/**/*.spec.ts',
-			'--exclude', 'dist/**',
-			'--exclude', 'node_modules/**',
 			'--include', 'src',
 			'node_modules/.bin/jasmine',
 			'src/**/*.spec.ts'

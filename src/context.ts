@@ -22,14 +22,14 @@ export class Context {
 	}
 
 	get isGuest() {
-		return (this.type = ContextType.GUEST)
+		return (this.type === ContextType.GUEST)
 	}
 
 	get isUser() {
-		return (this.type = ContextType.USER)
+		return (this.type === ContextType.USER)
 	}
 
 	get isSystem() {
-		return (this.type = ContextType.SYSTEM)
+		return (this.type === ContextType.SYSTEM)
 	}
 }

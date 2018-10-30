@@ -1,11 +1,10 @@
-import {Credentials, ExampleCredentials} from './credentials'
-import {AuthProviderType} from "@/authnproviders";
+import { Credentials, ExampleCredentials } from './credentials'
+import { AuthProviderType } from '@/authnproviders'
 
 /**
  * Tests for Credentials
  */
 describe('Credentials', () => {
-
 	/**
 	 * General Tests
 	 */

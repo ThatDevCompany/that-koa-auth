@@ -19,11 +19,11 @@ export function SecureMethod(
 		propertyKey: string,
 		descriptor: PropertyDescriptor
 	) {
+		// if (descriptor === undefined) {
+		// 	descriptor = Object.getOwnPropertyDescriptor(target, propertyKey)
+		// }
 		// We replace/wrap the original method
-		if (descriptor === undefined) {
-			descriptor = Object.getOwnPropertyDescriptor(target, propertyKey)
-		}
-		var originalMethod = descriptor.value
+		const originalMethod = descriptor.value
 
 		// The new method
 		descriptor.value = async function(uctx: Context, ...args) {

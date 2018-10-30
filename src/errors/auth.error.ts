@@ -8,6 +8,11 @@ export class AuthError extends ApplicationError {
 		public debugMessage: string = 'No debug information provided',
 		public debugInfo: any = {}
 	) {
-		super(401, 'Authentication Failed', 'ERROR in that-koa-dev: ' + debugMessage, debugInfo)
+		super(
+			401,
+			'Authentication Failed',
+			'ERROR in that-koa-dev: ' + debugMessage,
+			debugInfo
+		)
 	}
 }

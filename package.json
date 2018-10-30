@@ -17,7 +17,7 @@
         "publish": "node admin/scripts/publish.js"
     },
     "dependencies": {
-        "that-koa-error": "^0.0.4"
+        "that-koa-error": "^0.0.6"
     },
     "devDependencies": {
         "@types/jasmine": "^2.8.9",

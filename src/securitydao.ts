@@ -8,7 +8,13 @@ export interface SecurityDAO {
 }
 
 export const ExampleSecurityDAO: SecurityDAO = {
-	findUserById(tenantId: string, id: string): Promise<User> { return null },
-	findUserByIdentity(tenantId: string, identity: string): Promise<User> { return null },
-	findAuthTokenById(id: string): Promise<AuthToken> { return null }
+	findUserById(tenantId: string, id: string): Promise<User> {
+		return null
+	},
+	findUserByIdentity(tenantId: string, identity: string): Promise<User> {
+		return null
+	},
+	findAuthTokenById(id: string): Promise<AuthToken> {
+		return null
+	}
 }

@@ -1,17 +1,11 @@
-import {Context, ContextType} from './context'
+import { Context, ContextType } from './context'
 
 /**
  * Tests for Context
  */
 describe('Context', () => {
-	const userContext = new Context(
-		ContextType.USER,
-		'123',
-		'123'
-	)
-	const systemContext = new Context(
-		ContextType.SYSTEM
-	)
+	const userContext = new Context(ContextType.USER, '123', '123')
+	const systemContext = new Context(ContextType.SYSTEM)
 	const guestContext = new Context()
 
 	/**
