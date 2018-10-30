@@ -1,0 +1,33 @@
+{
+    "name": "that-koa-auth",
+    "description": "A lightweight and extendable AuthN and AuthZ library for Koa Applications",
+    "version": "0.0.10",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ThatDevCompany/that-koa-auth.git"
+    },
+    "contributors": [
+        "Stephen James <steve@thatdevcompany.com> (http://thatdevcompany.com)"
+    ],
+    "scripts": {
+        "lint": "node admin/scripts/lint.js",
+        "build": "node admin/scripts/build.js",
+        "test": "node admin/scripts/test.js",
+        "publish": "node admin/scripts/publish.js"
+    },
+    "dependencies": {
+        "that-koa-error": "^0.0.4"
+    },
+    "devDependencies": {
+        "@types/jasmine": "^2.8.9",
+        "@types/node": "^10.12.1",
+        "jasmine-core": "^3.3.0",
+        "jasmine-spec-reporter": "^4.2.1",
+        "nyc": "^13.1.0",
+        "that-build-library": "^0.1.36",
+        "ts-node": "^7.0.1",
+        "tsconfig-paths": "^3.6.0",
+        "typescript": "^3.1.4"
+    }
+}
