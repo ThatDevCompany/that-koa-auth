@@ -1,1 +1,3 @@
-export const apolloContext = ({ ctx }) => ctx
+export function apolloContext() {
+	return ({ ctx }) => ctx.uctx
+}

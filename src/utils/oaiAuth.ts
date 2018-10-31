@@ -5,7 +5,7 @@ import { AuthError } from '@/errors'
 /**
  * An Authentication plugin for the Koa OpenAPI Router system
  */
-export class AuthPlugin extends oaiRouter.Plugin {
+export class oaiAuth extends oaiRouter.Plugin {
 	pluginName = 'auth'
 	field = 'x-oai-auth' // Any endpoint marked with x-oai-auth will have authz enforced
 	args: any
