@@ -1,4 +1,4 @@
-export * from './authprovidertype.const'
+export * from './authnprovider'
 export * from './cognito.authnprovider'
 export * from './facebook.authnprovider'
 export * from './google.authnprovider'

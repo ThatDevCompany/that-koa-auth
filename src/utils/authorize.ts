@@ -1,9 +1,9 @@
-import { Permission } from '@/models'
+import { User, AuthToken, Permission } from '@/models'
 import { Context } from '@/context'
 import { SecurityDAO } from '@/securitydao'
 
-export async function authorize(
-	SecurityDAO: SecurityDAO,
+export async function authorize<U extends User, A extends AuthToken>(
+	SecurityDAO: SecurityDAO<U, A>,
 	uctx: Context,
 	permissions: Array<Permission>
 ): Promise<boolean> {
@@ -12,9 +12,10 @@ export async function authorize(
 		return false
 	}
 
-	// If no permissions are specified, then authorization is NOT granted
+	// If no permissions are specified,
+	// then authorization is NOT granted to GUESTS
 	if (!permissions || !permissions.length) {
-		return false
+		return !uctx.isGuest
 	}
 
 	// System Users always have permissions

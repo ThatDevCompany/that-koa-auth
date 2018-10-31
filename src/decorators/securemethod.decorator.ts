@@ -1,5 +1,5 @@
 import { AuthError } from '@/errors'
-import { Permission } from '@/models'
+import { User, AuthToken, Permission } from '@/models'
 import { Context } from '@/context'
 import { SecurityDAO } from '@/securitydao'
 import { authorize } from '@/utils'
@@ -7,8 +7,8 @@ import { authorize } from '@/utils'
 /**
  * Automatically add permission security to a method via a Decorator
  */
-export function SecureMethod(
-	SecurityDAO: SecurityDAO,
+export function SecureMethod<U extends User, A extends AuthToken>(
+	SecurityDAO: SecurityDAO<U, A>,
 	permissions: Array<Permission>
 ) {
 	/**

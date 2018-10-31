@@ -1,12 +1,8 @@
-import { AuthProviderType } from '@/authnproviders'
-
 export interface Credentials {
-	provider: AuthProviderType
+	provider?: string
 	tenantId?: string
 	identity?: string
 	passkey?: string
 }
 
-export const ExampleCredentials: Credentials = {
-	provider: AuthProviderType.BASIC
-}
+export const ExampleCredentials: Credentials = {}

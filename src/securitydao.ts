@@ -1,13 +1,12 @@
-import { AuthToken } from '@/models/authtoken.model'
-import { User } from '@/models/user.model'
+import { AuthToken, User } from '@/models'
 
-export interface SecurityDAO {
-	findUserById(tenantId: string, id: string): Promise<User>
-	findUserByIdentity(tenantId: string, identity: string): Promise<User>
-	findAuthTokenById(id: string): Promise<AuthToken>
+export interface SecurityDAO<U extends User, A extends AuthToken> {
+	findUserById(tenantId: string, id: string): Promise<U>
+	findUserByIdentity(tenantId: string, identity: string): Promise<U>
+	findAuthTokenById(id: string): Promise<A>
 }
 
-export const ExampleSecurityDAO: SecurityDAO = {
+export const ExampleSecurityDAO: SecurityDAO<User, AuthToken> = {
 	findUserById(tenantId: string, id: string): Promise<User> {
 		return null
 	},

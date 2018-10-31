@@ -1,10 +1,9 @@
-import { User } from '../models/user.model'
-import { SecurityDAO } from '@/securitydao'
+import { User, AuthToken } from '@/models'
+import { Credentials } from '@/credentials'
 
 /**
- * An abstract AuthN Provider class
+ * An AuthN Provider interface
  */
-export abstract class AuthNProvider {
-	/* CONSTRUCTOR */
-	constructor(public SecurityDAO: SecurityDAO) {}
+export interface AuthNProvider<U extends User, A extends AuthToken> {
+	authenticate(credentials: Credentials): Promise<U>
 }

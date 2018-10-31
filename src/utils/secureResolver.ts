@@ -1,9 +1,10 @@
 import { SecurityDAO } from '@/securitydao'
 import { authorize } from '@/utils/authorize'
 import { AuthError } from '@/errors'
+import { AuthToken, User } from '@/models'
 
-export function secureResolver(
-	securityDAO: SecurityDAO,
+export function secureResolver<U extends User, A extends AuthToken>(
+	securityDAO: SecurityDAO<U, A>,
 	fnc: (a, b, c) => any
 ) {
 	return async (x, y, uctx) => {

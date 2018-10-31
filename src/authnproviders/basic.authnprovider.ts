@@ -1,18 +1,23 @@
-import { User } from '@/models'
+import { AuthToken, User } from '@/models'
 import { AuthError } from '@/errors'
 import { Credentials } from '@/credentials'
 import { AuthNProvider } from './authnprovider'
+import { SecurityDAO } from '@/securitydao'
 
 /**
  * An Authentication Provider for basic auth (Username + Password)
  */
-export class BasicAuthNProvider extends AuthNProvider {
+export class BasicAuthNProvider<U extends User, A extends AuthToken>
+	implements AuthNProvider<U, A> {
+	/* CONSTRUCTOR */
+	constructor(public SecurityDAO: SecurityDAO<U, A>) {}
+
 	/* METHODS */
 	/**
 	 * Authenticate a given set of credentials
 	 */
-	async authenticate(credentials: Credentials): Promise<User> {
-		let user: User
+	async authenticate(credentials: Credentials): Promise<U> {
+		let user: U
 
 		// Find User with that username within the Tenant space for the Client
 		try {

@@ -37,7 +37,11 @@ export class Context {
 		return new Context(ContextType.GUEST)
 	}
 
-	static System(tentantId: string) {
+	static System(tentantId?: string) {
 		return new Context(ContextType.SYSTEM, null, tentantId)
+	}
+
+	static User(userId: string, tentantId?: string) {
+		return new Context(ContextType.USER, userId, tentantId)
 	}
 }

@@ -1,6 +1,5 @@
 import { authn } from './authn.middleware'
 import { ExampleSecurityDAO } from './securitydao'
-import * as utils from './utils'
 
 /**
  * Tests for Context
@@ -21,11 +20,11 @@ describe('Context', () => {
 		const test = authn(ExampleSecurityDAO)
 		const ctx = { headers: {}, query: {}, uctx: null }
 		const next = jasmine.createSpy('next')
-		const context = {}
-		spyOn(utils, 'authenticateToken').and.returnValue(Promise.resolve(context))
+		spyOn(ExampleSecurityDAO, 'findAuthTokenById').and.returnValue(
+			Promise.resolve(null)
+		)
 		await test(ctx, next)
 		expect(ctx.uctx).toBeDefined()
-		expect(ctx.uctx).toBe(context)
 		expect(next.calls.count()).toBe(1)
 	})
 
