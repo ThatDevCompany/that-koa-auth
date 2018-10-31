@@ -28,4 +28,14 @@ describe('Context', () => {
 		expect(ctx.uctx).toBe(context)
 		expect(next.calls.count()).toBe(1)
 	})
+
+	it('should attach a guest context if authentication fails', async () => {
+		const test = authn(ExampleSecurityDAO)
+		const ctx = { headers: {}, query: {}, uctx: null }
+		const next = jasmine.createSpy('next')
+		const context = {}
+		await test(ctx, next)
+		expect(ctx.uctx).toBeDefined()
+		expect(next.calls.count()).toBe(1)
+	})
 })

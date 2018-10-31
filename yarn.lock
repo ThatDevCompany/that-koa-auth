@@ -2046,9 +2046,9 @@ that-build-library@^0.1.36:
     ts-node "^7.0.0"
     tsconfig-paths "^3.5.0"
 
-that-koa-error@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/that-koa-error/-/that-koa-error-0.0.10.tgz#e7f7656c21426e365eaa511a7f48d8c82149f4c1"
+that-koa-error@^0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/that-koa-error/-/that-koa-error-0.0.12.tgz#05e380cd2cac4a1f041798aac6f8db5e43b43bdd"
 
 to-fast-properties@^1.0.3:
   version "1.0.3"

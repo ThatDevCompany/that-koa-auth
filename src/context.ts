@@ -32,4 +32,12 @@ export class Context {
 	get isSystem() {
 		return this.type === ContextType.SYSTEM
 	}
+
+	static Guest() {
+		return new Context(ContextType.GUEST)
+	}
+
+	static System(tentantId: string) {
+		return new Context(ContextType.SYSTEM, null, tentantId)
+	}
 }

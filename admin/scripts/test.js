@@ -22,6 +22,8 @@ module.exports = Promise.resolve()
 			'--statements', 80,
 			'--per-file',
 			'--extension', '.ts',
+			'--exclude', "node_modules",
+			'--exclude', "dist",
 			'--exclude', "src/index.ts",
 			'--exclude', "src/**/index.ts",
 			'--exclude', 'src/*.spec.ts',
