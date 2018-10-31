@@ -1,15 +1,14 @@
 import { SecurityDAO } from '@/securitydao'
-import { Context, ContextType } from '@/context'
-import { AuthError } from '@/errors/auth.error'
-import { User, AuthToken } from '@/models'
+import { Context } from '@/context'
+import { User } from '@/models'
 
 /**
  * This middleware performs Authentication
  * It will attach a special Auth Context to the Request Context
  * Based on the AuthToken Id provided via request headers or the query string
  */
-export function authn<U extends User, A extends AuthToken>(
-	SecurityDAO: SecurityDAO<U, A>
+export function authn<U extends User>(
+	SecurityDAO: SecurityDAO<U>
 ) {
 	return async (ctx, next) => {
 		let uctx: Context
@@ -18,28 +17,18 @@ export function authn<U extends User, A extends AuthToken>(
 		try {
 			// Get Token from header or querystring
 			const tokenId = (
-				ctx.headers['x-api-key'] ||
-				ctx.headers['authorization'] ||
-				ctx.query.token ||
-				''
-			)
+					ctx.headers['x-api-key'] ||
+					ctx.headers['authorization'] ||
+					ctx.query.token ||
+					''
+				)
 				.split('Basic ')
 				.join('')
 				.split('Bearer ')
 				.join('')
 
 			// Set the auth property of the context
-			let authToken = await SecurityDAO.findAuthTokenById(tokenId)
-
-			// If no valid authtoken was found
-			if (!authToken || !authToken.isValid()) {
-				uctx = Context.Guest()
-			}
-
-			// Otherwise
-			else {
-				uctx = Context.User(authToken.userId, authToken.tenantId)
-			}
+			let uctx = await SecurityDAO.contextFromToken(tokenId)
 
 			// Catch Errors
 		} catch (e) {

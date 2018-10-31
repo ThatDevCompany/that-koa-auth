@@ -1,4 +1,4 @@
-export * from './authnproviders'
+export * from './authenticators'
 export * from './decorators'
 export * from './errors'
 export * from './models'

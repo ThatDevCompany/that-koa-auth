@@ -1,5 +1,6 @@
 import { SecurityDAO, ExampleSecurityDAO } from './securitydao'
-import { AuthToken, User } from '@/models'
+import { User } from '@/models'
+import {Context} from "@/context";
 
 /**
  * Tests for SecurityDAO
@@ -9,21 +10,21 @@ describe('SecurityDAO', () => {
 	 * General Tests
 	 */
 	it('should be an interface', async () => {
-		const test: SecurityDAO = {
-			findUserById(tenantId: string, id: string): Promise<User> {
+		const test: SecurityDAO<User> = {
+			async findUserById(tenantId: string, id: string): Promise<User> {
 				return null
 			},
-			findUserByIdentity(tenantId: string, identity: string): Promise<User> {
+			async findUserByIdentity(tenantId: string, identity: string): Promise<User> {
 				return null
 			},
-			findAuthTokenById(id: string): Promise<AuthToken> {
-				return null
+			async contextFromToken(token: string): Promise<Context> {
+				return Context.Guest()
 			}
 		}
 		expect(test).toBeDefined()
 		expect(ExampleSecurityDAO).toBeDefined()
 		expect(await ExampleSecurityDAO.findUserById(null, null)).toBeNull()
 		expect(await ExampleSecurityDAO.findUserByIdentity(null, null)).toBeNull()
-		expect(await ExampleSecurityDAO.findAuthTokenById(null)).toBeNull()
+		expect(await ExampleSecurityDAO.contextFromToken(null)).toBeDefined()
 	})
 })

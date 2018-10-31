@@ -20,8 +20,8 @@ describe('Context', () => {
 		const test = authn(ExampleSecurityDAO)
 		const ctx = { headers: {}, query: {}, uctx: null }
 		const next = jasmine.createSpy('next')
-		spyOn(ExampleSecurityDAO, 'findAuthTokenById').and.returnValue(
-			Promise.resolve(null)
+		spyOn(ExampleSecurityDAO, 'contextFromToken').and.returnValue(
+			Promise.resolve({})
 		)
 		await test(ctx, next)
 		expect(ctx.uctx).toBeDefined()

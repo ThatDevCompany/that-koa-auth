@@ -16,7 +16,8 @@ export class Context {
 	constructor(
 		public type: ContextType = ContextType.GUEST,
 		public userId?: string,
-		public tenantId?: string
+		public tenantId?: string,
+		public data: any = {}
 	) {
 		assert(type != ContextType.USER || userId, 'UserID missing in Context')
 	}

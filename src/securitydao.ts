@@ -1,19 +1,20 @@
-import { AuthToken, User } from '@/models'
+import { User } from '@/models'
+import {Context} from "@/context";
 
-export interface SecurityDAO<U extends User, A extends AuthToken> {
+export interface SecurityDAO<U extends User> {
 	findUserById(tenantId: string, id: string): Promise<U>
 	findUserByIdentity(tenantId: string, identity: string): Promise<U>
-	findAuthTokenById(id: string): Promise<A>
+	contextFromToken(token: string): Promise<Context>
 }
 
-export const ExampleSecurityDAO: SecurityDAO<User, AuthToken> = {
-	findUserById(tenantId: string, id: string): Promise<User> {
+export const ExampleSecurityDAO: SecurityDAO<User> = {
+	async findUserById(tenantId: string, id: string): Promise<User> {
 		return null
 	},
-	findUserByIdentity(tenantId: string, identity: string): Promise<User> {
+	async findUserByIdentity(tenantId: string, identity: string): Promise<User> {
 		return null
 	},
-	findAuthTokenById(id: string): Promise<AuthToken> {
-		return null
+	async contextFromToken(token: string): Promise<Context> {
+		return Context.Guest()
 	}
 }

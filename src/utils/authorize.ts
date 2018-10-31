@@ -1,9 +1,9 @@
-import { User, AuthToken, Permission } from '@/models'
+import { User, Permission } from '@/models'
 import { Context } from '@/context'
 import { SecurityDAO } from '@/securitydao'
 
-export async function authorize<U extends User, A extends AuthToken>(
-	SecurityDAO: SecurityDAO<U, A>,
+export async function authorize<U extends User>(
+	SecurityDAO: SecurityDAO<U>,
 	uctx: Context,
 	permissions: Array<Permission>
 ): Promise<boolean> {
