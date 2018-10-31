@@ -12,9 +12,9 @@ export async function authorize(
 		return false
 	}
 
-	// If no permissions are specified, then authorization is granted
+	// If no permissions are specified, then authorization is NOT granted
 	if (!permissions || !permissions.length) {
-		return true
+		return false
 	}
 
 	// System Users always have permissions

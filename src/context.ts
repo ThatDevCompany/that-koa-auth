@@ -4,9 +4,9 @@ import { assert } from 'that-koa-error'
  * A Type enum for Contexts
  */
 export enum ContextType {
-	USER,
-	SYSTEM,
-	GUEST
+	USER = 'USER',
+	SYSTEM = 'SYSTEM',
+	GUEST = 'GUEST'
 }
 
 /**
