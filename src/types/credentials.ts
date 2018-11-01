@@ -1,4 +1,7 @@
-export interface Credentials {
+/**
+ * A type interface for Credentials
+ */
+export type Credentials = {
 	provider?: string
 	tenantId?: string
 	identity?: string

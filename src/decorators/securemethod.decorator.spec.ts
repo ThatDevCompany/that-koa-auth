@@ -1,14 +1,9 @@
 import { SecureMethod } from './securemethod.decorator'
-import * as utils from '../utils'
-import { AuthError } from '@/errors'
 
 /**
- * Tests for SecureMethod
+ * SecureMethod
  */
 describe('SecureMethod', () => {
-	/**
-	 * General Tests
-	 */
 	it('should be defined', async () => {
 		expect(SecureMethod).toBeDefined()
 	})
@@ -27,7 +22,6 @@ describe('SecureMethod', () => {
 	})
 
 	it('should call original method if authorize ok', async () => {
-		const s = spyOn(utils, 'authorize').and.returnValue(Promise.resolve(true))
 		const target = null
 		const propertyKey = 'test'
 		const fired = false
@@ -35,12 +29,10 @@ describe('SecureMethod', () => {
 		const descriptor = { value }
 		await SecureMethod(null, null)(target, propertyKey, descriptor)
 		await descriptor.value(null)
-		expect(s.calls.count()).toBe(1)
 		expect(value.calls.count()).toBe(1)
 	})
 
 	it('should throw AuthError if authorize failed', async () => {
-		const s = spyOn(utils, 'authorize').and.returnValue(Promise.resolve(false))
 		const target = null
 		const propertyKey = 'test'
 		const fired = false

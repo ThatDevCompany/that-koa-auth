@@ -10,7 +10,7 @@ export enum ContextType {
 }
 
 /**
- * An Auth Context class
+ * The Context class
  */
 export class Context {
 	constructor(
@@ -42,7 +42,7 @@ export class Context {
 		return new Context(ContextType.SYSTEM, null, tentantId)
 	}
 
-	static User(userId: string, tentantId?: string) {
-		return new Context(ContextType.USER, userId, tentantId)
+	static User(userId: string, tentantId?: string, data?: any) {
+		return new Context(ContextType.USER, userId, tentantId, data)
 	}
 }

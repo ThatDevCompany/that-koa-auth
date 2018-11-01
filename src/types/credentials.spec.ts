@@ -1,13 +1,10 @@
 import { Credentials, ExampleCredentials } from './credentials'
 
 /**
- * Tests for Credentials
+ * Credentials
  */
 describe('Credentials', () => {
-	/**
-	 * General Tests
-	 */
-	it('should be an interface', async () => {
+	it('should be a type interface', async () => {
 		const test: Credentials = {
 			provider: 'provider',
 			tenantId: 'tenantId',

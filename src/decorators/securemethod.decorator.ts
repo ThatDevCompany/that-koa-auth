@@ -1,14 +1,13 @@
 import { AuthError } from '@/errors'
-import { User, Permission } from '@/models'
+import { User, Permission } from '@/types'
 import { Context } from '@/context'
-import { SecurityDAO } from '@/securitydao'
-import { authorize } from '@/utils'
+import { Authorizer } from '@/authorizer'
 
 /**
  * Automatically add permission security to a method via a Decorator
  */
 export function SecureMethod<U extends User>(
-	SecurityDAO: SecurityDAO<U>,
+	authorizer: Authorizer,
 	permissions: Array<Permission>
 ) {
 	/**
@@ -28,7 +27,7 @@ export function SecureMethod<U extends User>(
 		// The new method
 		descriptor.value = async function(uctx: Context, ...args) {
 			// Perform Authorization
-			if (!(await authorize(SecurityDAO, uctx, permissions))) {
+			if (!(await authorizer.authorize(uctx, permissions))) {
 				throw new AuthError('Unauthorized attempt to call ' + propertyKey, {
 					uctx,
 					...args
