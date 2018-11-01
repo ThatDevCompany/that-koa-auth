@@ -21,7 +21,7 @@ export class TokenAuthenticator<U extends User> implements Authenticator<U> {
 	/**
 	 * Authenticate a KOA request context
 	 */
-	async authenticate(ctx: any): Promise<U> {
+	async authenticate(ctx: any): Promise<{ user: U; data: any }> {
 		const token = (
 			ctx.headers['x-api-key'] ||
 			ctx.headers['authorization'] ||
@@ -33,6 +33,9 @@ export class TokenAuthenticator<U extends User> implements Authenticator<U> {
 			.split('Bearer ')
 			.join('')
 
-		return await this.auth.findUserByToken(token)
+		return {
+			user: await this.auth.findUserByToken(token),
+			data: { token }
+		}
 	}
 }

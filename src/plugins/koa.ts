@@ -1,4 +1,3 @@
-import { AuthService } from '@/authservice'
 import { Context } from '@/context'
 import { User } from '@/types'
 import { Authenticator } from '@/authenticator'
@@ -14,12 +13,12 @@ export function koaAuthN<U extends User>(authenticator: Authenticator<U>) {
 
 		// Attempt to Create Context from Token Id
 		try {
-			const user = await authenticator.authenticate(ctx)
+			const { user, data } = await authenticator.authenticate(ctx)
 
 			if (!user) {
 				uctx = Context.Guest()
 			} else {
-				uctx = Context.User(user.id, user.tenantId)
+				uctx = Context.User(user.id, user.tenantId, data)
 			}
 
 			// Catch Errors

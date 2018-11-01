@@ -27,7 +27,7 @@ export class PasswordAuthenticator<U extends PasswordAuthNUser>
 	/**
 	 * Authenticate a KOA request context
 	 */
-	async authenticate(ctx: any): Promise<U> {
+	async authenticate(ctx: any): Promise<{ user: U }> {
 		let user: U
 
 		// Find User by their identity
@@ -47,6 +47,6 @@ export class PasswordAuthenticator<U extends PasswordAuthNUser>
 		}
 
 		// We are authenticated
-		return user
+		return { user }
 	}
 }

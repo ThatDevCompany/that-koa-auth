@@ -9,7 +9,7 @@ export class FacebookAuthenticator<U extends User> implements Authenticator<U> {
 	/**
 	 * Authenticate a KOA request context
 	 */
-	authenticate(ctx: any): Promise<U> {
+	authenticate(ctx: any): Promise<{ user: U }> {
 		throw new AuthError('FacebookProviderClass.authenticate Not Implemented')
 	}
 }
