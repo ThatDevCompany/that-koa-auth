@@ -1,11 +1,14 @@
-import { BasicAuthorizer, BasicAuthZService, BasicAuthZRole } from './basic.authorizer'
-import {Context} from "@/context";
+import {
+	BasicAuthorizer,
+	BasicAuthZService,
+	BasicAuthZRole
+} from './basic.authorizer'
+import { Context } from '@/context'
 
 /**
  * BasicAuthorizer
  */
 describe('BasicAuthorizer', () => {
-
 	let auth: BasicAuthZService<BasicAuthZRole> = {
 			getRolesForContext(uctx: Context): Promise<Array<BasicAuthZRole>> {
 				return [] as any
@@ -13,16 +16,20 @@ describe('BasicAuthorizer', () => {
 		},
 		authGoodRoles: BasicAuthZService<BasicAuthZRole> = {
 			getRolesForContext(uctx: Context): Promise<Array<BasicAuthZRole>> {
-				return [{
-					hasPermission: () => true
-				}] as any
+				return [
+					{
+						hasPermission: () => true
+					}
+				] as any
 			}
 		},
 		authBadRoles: BasicAuthZService<BasicAuthZRole> = {
 			getRolesForContext(uctx: Context): Promise<Array<BasicAuthZRole>> {
-				return [{
-					hasPermission: () => false
-				}] as any
+				return [
+					{
+						hasPermission: () => false
+					}
+				] as any
 			}
 		}
 	let res
@@ -59,13 +66,18 @@ describe('BasicAuthorizer', () => {
 	})
 
 	it('should return false if user needs permissions but doesnt have them', async () => {
-		res = await new BasicAuthorizer(authBadRoles).authorize(Context.User('1234'), [{}])
+		res = await new BasicAuthorizer(authBadRoles).authorize(
+			Context.User('1234'),
+			[{}]
+		)
 		expect(res).toBeFalsy()
 	})
 
 	it('should return true  if user has needed permissions', async () => {
-		res = await new BasicAuthorizer(authGoodRoles).authorize(Context.User('1234'), [{}])
+		res = await new BasicAuthorizer(authGoodRoles).authorize(
+			Context.User('1234'),
+			[{}]
+		)
 		expect(res).toBeTruthy()
 	})
-
 })

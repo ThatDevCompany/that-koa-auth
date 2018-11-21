@@ -1,13 +1,12 @@
 import { koaAuthN } from './koa'
 import { Context } from '@/context'
-import {Authenticator} from '@/authenticator'
-import {User} from "@/types";
+import { Authenticator } from '@/authenticator'
+import { User } from '@/types'
 
 /**
  * Tests for Context
  */
 describe('Context', () => {
-
 	let noAuth: Authenticator<User> = {
 		async authenticate(ctx: any): Promise<{ user: User }> {
 			return null
@@ -15,7 +14,10 @@ describe('Context', () => {
 	}
 	let auth: Authenticator<User> = {
 		async authenticate(ctx: any): Promise<{ user: any }> {
-			return Promise.resolve({ user: { id: '1234', tenantId: '2345' }, data: null })
+			return Promise.resolve({
+				user: { id: '1234', tenantId: '2345' },
+				data: null
+			})
 		}
 	}
 

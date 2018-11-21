@@ -33,12 +33,18 @@ describe('TokenAuthenticator', () => {
 
 	it('should error if user not found', async () => {
 		await expectAsyncToThrow(() =>
-			new TokenAuthenticator(authFail).authenticate({ headers: {}, query: { token: '1234' }})
+			new TokenAuthenticator(authFail).authenticate({
+				headers: {},
+				query: { token: '1234' }
+			})
 		)
 	})
 
 	it('should return user if found', async () => {
-		const user = new TokenAuthenticator(auth).authenticate({ headers: {}, query: { token: '1234' }})
+		const user = new TokenAuthenticator(auth).authenticate({
+			headers: {},
+			query: { token: '1234' }
+		})
 		expect(user).toBeDefined()
 	})
 })

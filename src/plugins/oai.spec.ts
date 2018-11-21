@@ -1,11 +1,10 @@
 import { oaiAuthZ } from './oai'
-import {expectAsyncToThrow} from "../../../that-koa-error/src/utils/expectAsyncToThrow";
+import { expectAsyncToThrow } from '../../../that-koa-error/src/utils/expectAsyncToThrow'
 
 /**
  * Tests for oaiAuthZ
  */
 describe('oaiAuthZ', () => {
-
 	it('should be instantiable', async () => {
 		expect(new oaiAuthZ()).toBeDefined()
 	})
@@ -14,7 +13,9 @@ describe('oaiAuthZ', () => {
 		const oai = new oaiAuthZ()
 		oai.args = {
 			authorizer: {
-				authorize() { return Promise.resolve(false) }
+				authorize() {
+					return Promise.resolve(false)
+				}
 			}
 		}
 		const handler = await oai.handler({ endpoint: '' })
@@ -27,7 +28,9 @@ describe('oaiAuthZ', () => {
 		const oai = new oaiAuthZ()
 		oai.args = {
 			authorizer: {
-				authorize() { return Promise.resolve(true) }
+				authorize() {
+					return Promise.resolve(true)
+				}
 			}
 		}
 		const handler = await oai.handler({ endpoint: '' })
@@ -35,5 +38,4 @@ describe('oaiAuthZ', () => {
 		await handler({ uctx: {} }, next)
 		expect(next).toHaveBeenCalled()
 	})
-
 })
