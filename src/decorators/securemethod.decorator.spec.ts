@@ -4,12 +4,23 @@ import { SecureMethod } from './securemethod.decorator'
  * SecureMethod
  */
 describe('SecureMethod', () => {
+	let successAuth = {
+			async authorize(...args) {
+				return true
+			}
+		},
+		failAuth = {
+			async authorize(...args) {
+				return false
+			}
+		}
+
 	it('should be defined', async () => {
 		expect(SecureMethod).toBeDefined()
 	})
 
 	it('should be a decorator factory', async () => {
-		expect(typeof SecureMethod(null, null)).toBe('function')
+		expect(typeof SecureMethod(successAuth, [])).toBe('function')
 	})
 
 	it('should wrap descriptor value', async () => {
@@ -17,8 +28,19 @@ describe('SecureMethod', () => {
 		const propertyKey = 'test'
 		const value = () => {}
 		const descriptor = { value }
-		SecureMethod(null, null)(target, propertyKey, descriptor)
+		SecureMethod(successAuth, [])(target, propertyKey, descriptor)
 		expect(descriptor.value != value).toBeTruthy()
+	})
+
+	it('should call original method if no authorizer provided', async () => {
+		const target = null
+		const propertyKey = 'test'
+		const fired = false
+		const value = jasmine.createSpy('value')
+		const descriptor = { value }
+		await SecureMethod(null, [])(target, propertyKey, descriptor)
+		await descriptor.value(null)
+		expect(value.calls.count()).toBe(1)
 	})
 
 	it('should call original method if authorize ok', async () => {
@@ -27,7 +49,7 @@ describe('SecureMethod', () => {
 		const fired = false
 		const value = jasmine.createSpy('value')
 		const descriptor = { value }
-		await SecureMethod(null, null)(target, propertyKey, descriptor)
+		await SecureMethod(successAuth, [])(target, propertyKey, descriptor)
 		await descriptor.value(null)
 		expect(value.calls.count()).toBe(1)
 	})
@@ -38,7 +60,7 @@ describe('SecureMethod', () => {
 		const fired = false
 		const value = jasmine.createSpy('value')
 		const descriptor = { value }
-		await SecureMethod(null, null)(target, propertyKey, descriptor)
+		await SecureMethod(failAuth, [])(target, propertyKey, descriptor)
 		try {
 			await descriptor.value(null)
 			expect(false).toBeTruthy()

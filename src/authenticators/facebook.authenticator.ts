@@ -1,15 +1,21 @@
 import { User } from '@/types'
-import { AuthError } from '@/errors'
-import { Authenticator } from '@/authenticator'
+import { CognitoAuthenticator } from '@/authenticators/cognito.authenticator'
 
 /**
- * An Authentication Provider for Facebook authentication tokens
+ * An Authentication Provider for Facebook auth federated through Cognito
  */
-export class FacebookAuthenticator<U extends User> implements Authenticator<U> {
+export class FacebookAuthenticator<U extends User> extends CognitoAuthenticator<
+	U
+> {
 	/**
-	 * Authenticate a KOA request context
+	 * Return the Indentity Request object
 	 */
-	authenticate(ctx: any): Promise<{ user: U }> {
-		throw new AuthError('FacebookProviderClass.authenticate Not Implemented')
+	public makeIdentityRequest(ctx: any) {
+		const c = this.auth.cognitoConfig
+
+		return {
+			IdentityPoolId: c.identityPoolId,
+			Logins: { ['graph.facebook.com']: ctx.request.body.token }
+		}
 	}
 }

@@ -33,8 +33,15 @@ export class TokenAuthenticator<U extends User> implements Authenticator<U> {
 			.split('Bearer ')
 			.join('')
 
+		const user = await this.auth.findUserByToken(token)
+
+		// Was the User found?
+		if (!user) {
+			throw new AuthError('User not found')
+		}
+
 		return {
-			user: await this.auth.findUserByToken(token),
+			user,
 			data: { token }
 		}
 	}

@@ -1,15 +1,21 @@
 import { User } from '@/types'
-import { AuthError } from '@/errors'
-import { Authenticator } from '@/authenticator'
+import { CognitoAuthenticator } from '@/authenticators/cognito.authenticator'
 
 /**
- * An Authentication Provider for Google authentication tokens
+ * An Authentication Provider for Google auth federated through Cognito
  */
-export class GoogleAuthenticator<U extends User> implements Authenticator<U> {
+export class GoogleAuthenticator<U extends User> extends CognitoAuthenticator<
+	U
+> {
 	/**
-	 * Authenticate a KOA request context
+	 * Return the Indentity Request object
 	 */
-	authenticate(ctx: any): Promise<{ user: U }> {
-		throw new AuthError('GoogleProvider.authenticate Not Implemented')
+	public makeIdentityRequest(ctx: any) {
+		const c = this.auth.cognitoConfig
+
+		return {
+			IdentityPoolId: c.identityPoolId,
+			Logins: { ['accounts.google.com']: ctx.request.body.token }
+		}
 	}
 }

@@ -18,9 +18,8 @@ export function SecureMethod<U extends User>(
 		propertyKey: string,
 		descriptor: PropertyDescriptor
 	) {
-		// if (descriptor === undefined) {
-		// 	descriptor = Object.getOwnPropertyDescriptor(target, propertyKey)
-		// }
+		if (!authorizer) return
+
 		// We replace/wrap the original method
 		const originalMethod = descriptor.value
 

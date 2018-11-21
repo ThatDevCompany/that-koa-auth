@@ -34,4 +34,16 @@ describe('Context', () => {
 		expect(systemContext.isGuest).toBeFalsy()
 		expect(guestContext.isGuest).toBeTruthy()
 	})
+
+	it('should generate a system context', async () => {
+		expect(Context.System()).toBeDefined()
+	})
+
+	it('should generate a guest context', async () => {
+		expect(Context.Guest()).toBeDefined()
+	})
+
+	it('should generate a user context', async () => {
+		expect(Context.User('1234')).toBeDefined()
+	})
 })
