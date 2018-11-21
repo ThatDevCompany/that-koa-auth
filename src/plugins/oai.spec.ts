@@ -1,5 +1,5 @@
 import { oaiAuthZ } from './oai'
-import { expectAsyncToThrow } from '../../../that-koa-error/src/utils/expectAsyncToThrow'
+import { expectAsyncToThrow } from 'that-koa-error'
 
 /**
  * Tests for oaiAuthZ
