@@ -1,7 +1,7 @@
 {
     "name": "that-koa-auth",
     "description": "A lightweight and extendable AuthN and AuthZ library for Koa Applications",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -19,7 +19,7 @@
     "dependencies": {
         "aws-sdk": "^2.305.0",
         "koa-oai-router": "^2.0.3",
-        "that-koa-error": "^1.0.1"
+        "that-koa-error": "^1.0.8"
     },
     "devDependencies": {
         "@types/jasmine": "3.3.0",

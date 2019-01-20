@@ -5,14 +5,9 @@ import { ApplicationError } from 'that-koa-error'
  */
 export class AuthError extends ApplicationError {
 	constructor(
-		public debugMessage: string = 'No debug information provided',
-		public debugInfo: any = {}
+		authErrorMessage: string = 'No debug information provided',
+		authErrorInfo: any = {}
 	) {
-		super(
-			401,
-			'Authentication Failed',
-			'ERROR in that-koa-dev: ' + debugMessage,
-			debugInfo
-		)
+		super(401, 'Authentication Error - ' + authErrorMessage, '', authErrorInfo)
 	}
 }
