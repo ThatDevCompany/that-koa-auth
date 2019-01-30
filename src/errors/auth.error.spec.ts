@@ -19,7 +19,7 @@ describe('AuthError', () => {
 		expect(new AuthError().message).toBe('Authentication Failed')
 	})
 
-	it('should have a default debug message', async () => {
-		expect(new AuthError().debugMessage).toBe('No debug information provided')
+	it('should have a default messages', async () => {
+		expect(new AuthError().debugMessage).toBe('')
 	})
 })
