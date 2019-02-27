@@ -1,6 +1,6 @@
-import { CognitoAuthenticator } from './cognito.authenticator'
+import {CognitoAuthCredential, CognitoAuthenticator} from './cognito.authenticator'
 import { CognitoAuthNService } from '@/authenticators/cognito.authenticator'
-import { User, Tenant } from '@/types'
+import { User } from '@/types'
 import { expectAsyncToThrow } from 'that-koa-error'
 import { CognitoIdentity } from 'aws-sdk'
 
@@ -8,13 +8,13 @@ import { CognitoIdentity } from 'aws-sdk'
  * CognitoAuthenticator
  */
 describe('CognitoAuthenticator', () => {
-	let auth: CognitoAuthNService<User, Tenant> = {
+	let auth: CognitoAuthNService<User, CognitoAuthCredential> = {
 		cognitoConfig: {
 			region: '',
 			userPool: '',
 			identityPoolId: ''
 		},
-		findUserByCognitoId: jasmine
+		findUserMatchingCredentials: jasmine
 			.createSpy()
 			.and.returnValue(Promise.resolve({}))
 	}
@@ -33,23 +33,23 @@ describe('CognitoAuthenticator', () => {
  * CognitoAuthenticator
  */
 describe('CognitoAuthenticator.authenticate', () => {
-	let auth: CognitoAuthNService<User, Tenant> = {
+	let auth: CognitoAuthNService<User, CognitoAuthCredential> = {
 			cognitoConfig: {
 				region: '',
 				userPool: '',
 				identityPoolId: ''
 			},
-			findUserByCognitoId: jasmine
+			findUserMatchingCredentials: jasmine
 				.createSpy()
 				.and.returnValue(Promise.resolve({}))
 		},
-		authNoUsers: CognitoAuthNService<User, Tenant> = {
+		authNoUsers: CognitoAuthNService<User, CognitoAuthCredential> = {
 			cognitoConfig: {
 				region: '',
 				userPool: '',
 				identityPoolId: ''
 			},
-			findUserByCognitoId: jasmine
+			findUserMatchingCredentials: jasmine
 				.createSpy()
 				.and.returnValue(Promise.resolve(null))
 		}
@@ -64,7 +64,7 @@ describe('CognitoAuthenticator.authenticate', () => {
 		)
 		await expectAsyncToThrow(() =>
 			new CognitoAuthenticator(auth).generateAuthContext({
-				tenant: testTenant
+				identity: '1234'
 			})
 		)
 	})

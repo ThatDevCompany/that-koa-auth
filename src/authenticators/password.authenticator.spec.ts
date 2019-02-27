@@ -1,16 +1,17 @@
 import {
+	PasswordAuthCredential,
 	PasswordAuthenticator,
-	PasswordAuthNService,
 	PasswordAuthNUser
 } from './password.authenticator'
 import { expectAsyncToThrow } from 'that-koa-error'
+import {BasicAuthNService} from "@/authenticators/basic.authenticator";
 
 /**
  * PasswordAuthenticator
  */
 describe('PasswordAuthenticator', () => {
-	let auth: PasswordAuthNService<PasswordAuthNUser> = {
-		findUserByIdentity: jasmine.createSpy().and.returnValue(
+	let auth: BasicAuthNService<PasswordAuthNUser, PasswordAuthCredential> = {
+		findUserMatchingCredentials: jasmine.createSpy().and.returnValue(
 			Promise.resolve({
 				async passwordMatches(v) {
 					return v === 'test'
@@ -18,8 +19,8 @@ describe('PasswordAuthenticator', () => {
 			})
 		)
 	}
-	let authFail: PasswordAuthNService<PasswordAuthNUser> = {
-		findUserByIdentity: jasmine
+	let authFail: BasicAuthNService<PasswordAuthNUser, PasswordAuthCredential> = {
+		findUserMatchingCredentials: jasmine
 			.createSpy()
 			.and.returnValue(Promise.resolve(null))
 	}
@@ -30,23 +31,23 @@ describe('PasswordAuthenticator', () => {
 
 	it('should error if user not found', async () => {
 		await expectAsyncToThrow(() =>
-			new PasswordAuthenticator(authFail).authenticate({
-				request: { body: {} }
+			new PasswordAuthenticator(authFail).generateAuthContext({
+				identity: '1234', passkey: 'abcd'
 			})
 		)
 	})
 
 	it('should error if user password failure', async () => {
 		await expectAsyncToThrow(() =>
-			new PasswordAuthenticator(auth).authenticate({
-				request: { body: { passkey: 'cheese' } }
+			new PasswordAuthenticator(auth).generateAuthContext({
+				identity: '1234', passkey: 'abcd'
 			})
 		)
 	})
 
 	it('should return user if password match', async () => {
-		const user = await new PasswordAuthenticator(auth).authenticate({
-			request: { body: { passkey: 'test' } }
+		const user = await new PasswordAuthenticator(auth).generateAuthContext({
+			identity: '1234', passkey: 'abcd'
 		})
 		expect(user).toBeDefined()
 	})

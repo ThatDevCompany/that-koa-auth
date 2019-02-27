@@ -5,8 +5,28 @@ import { Authenticator } from '@/authenticator'
 /**
  * Koa Auth Credential Generator
  */
-export type KoaAuthCredentialGenerator<C extends AuthCredential> = {
+export interface KoaAuthCredentialGenerator<C extends AuthCredential> {
 	generateCredentialFromKoaContext(ctx: any): C
+}
+
+export class BasicKoaAuthCredentialGenerator
+	implements KoaAuthCredentialGenerator<AuthCredential> {
+
+	generateCredentialFromKoaContext(ctx: any): AuthCredential {
+		let identity = (
+			ctx.headers['x-api-key'] ||
+			ctx.headers['authorization'] ||
+			ctx.query.token ||
+			''
+		)
+			.split('Basic ')
+			.join('')
+			.split('Bearer ')
+			.join('')
+
+		return { identity } as AuthCredential
+	}
+
 }
 
 /**

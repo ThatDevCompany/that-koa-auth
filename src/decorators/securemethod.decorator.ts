@@ -1,13 +1,13 @@
 import { AuthError } from '@/errors'
-import { User, Permission, Tenant } from '@/types'
+import { User, Permission } from '@/types'
 import { AuthContext } from '@/authcontext'
 import { Authorizer } from '@/authorizer'
 
 /**
  * Automatically add permission security to a method via a Decorator
  */
-export function SecureMethod<U extends User, T extends Tenant>(
-	authorizer: Authorizer<U, T>,
+export function SecureMethod<U extends User, A extends AuthContext<U>>(
+	authorizer: Authorizer<U, A>,
 	permissions: Permission[]
 ) {
 	/**
@@ -24,7 +24,7 @@ export function SecureMethod<U extends User, T extends Tenant>(
 		const originalMethod = descriptor.value
 
 		// The new method
-		descriptor.value = async function(auth: AuthContext<U, T>, ...args) {
+		descriptor.value = async function(auth: A, ...args) {
 			// Perform Authorization
 			if (!(await authorizer.authorize(auth, permissions))) {
 				throw new AuthError('Unauthorized attempt to call ' + propertyKey, {

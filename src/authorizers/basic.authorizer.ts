@@ -7,17 +7,13 @@ import { Authorizer } from '@/authorizer'
  * An interface for an AuthService that provides all the necessary
  * methods for Basic authorization
  */
-
-export interface BasicAuthZRole extends Role {
-	hasPermission(permission: Permission): boolean
-}
-
 export interface BasicAuthZService<
 	U extends User,
-	T extends Tenant,
-	R extends BasicAuthZRole
+	R extends Role,
+	P extends Permission,
+	A extends AuthContext<U>
 > extends AuthService {
-	getRolesForContext(auth: AuthContext<U, T>): Promise<R[]>
+	getRolesFromAuthContext(auth: A): Promise<R[]>
 }
 
 /**
@@ -25,17 +21,18 @@ export interface BasicAuthZService<
  */
 export class BasicAuthorizer<
 	U extends User,
-	T extends Tenant,
-	R extends BasicAuthZRole
-> implements Authorizer<U, T> {
-	constructor(private auth: BasicAuthZService<U, T, R>) {}
+	R extends Role,
+	P extends Permission,
+	A extends AuthContext<U>
+> implements Authorizer<U, A> {
+	constructor(
+		private auth: BasicAuthZService<U, R, P, A>
+	) {}
 
-	async authorize(
-		auth: AuthContext<U, T>,
-		permissions: Permission[]
+	async authorize(auth: A, permissions: P[]
 	): Promise<boolean> {
 		// NULL Safety
-		if (!auth || !(auth instanceof AuthContext)) {
+		if (!auth) {
 			return false
 		}
 
@@ -56,7 +53,7 @@ export class BasicAuthorizer<
 		}
 
 		// Load the User
-		const roles = await this.auth.getRolesForContext(auth)
+		const roles = await this.auth.getRolesFromAuthContext(auth)
 
 		// Fail if there is a required permission that
 		// is not met by any of the user's roles

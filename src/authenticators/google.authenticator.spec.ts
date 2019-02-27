@@ -1,18 +1,18 @@
 import { GoogleAuthenticator } from './google.authenticator'
-import { CognitoAuthNService } from '@/authenticators/cognito.authenticator'
+import {CognitoAuthCredential, CognitoAuthNService} from '@/authenticators/cognito.authenticator'
 import { User } from '@/types'
 
 /**
  * GoogleAuthenticator
  */
 describe('GoogleAuthenticator', () => {
-	let auth: CognitoAuthNService<User> = {
+	let auth: CognitoAuthNService<User, CognitoAuthCredential> = {
 		cognitoConfig: {
 			region: '',
 			userPool: '',
 			identityPoolId: ''
 		},
-		findUserByCognitoId(cognitoId: string): Promise<User> {
+		findUserMatchingCredentials(cred: CognitoAuthCredential): Promise<User> {
 			return Promise.resolve(null)
 		}
 	}

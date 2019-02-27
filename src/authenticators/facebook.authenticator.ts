@@ -1,12 +1,15 @@
 import { User } from '@/types'
-import { CognitoAuthenticator } from '@/authenticators/cognito.authenticator'
+import {CognitoAuthCredential, CognitoAuthenticator} from '@/authenticators/cognito.authenticator'
+import {AuthContext} from "@/authcontext";
 
 /**
  * An Authentication Provider for Facebook auth federated through Cognito
  */
-export class FacebookAuthenticator<U extends User> extends CognitoAuthenticator<
-	U
-> {
+export class FacebookAuthenticator<
+	U extends User,
+	C extends CognitoAuthCredential,
+	A extends AuthContext<U>
+> extends CognitoAuthenticator<U, C, A> {
 	/**
 	 * Return the Indentity Request object
 	 */

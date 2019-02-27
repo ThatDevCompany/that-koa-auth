@@ -1,26 +1,43 @@
-import { assert } from 'that-koa-error'
-import { Credentials, User, Tenant } from '@/types'
-import { AuthError } from '@/errors'
-import { Authenticator } from '@/authenticator'
-import { CognitoIdentity } from 'aws-sdk'
-import { AuthContext } from '@/authcontext'
+import {assert} from 'that-koa-error'
+import {AuthCredential, User} from '@/types'
+import {AuthError} from '@/errors'
+import {Authenticator} from '@/authenticator'
+import {CognitoIdentity} from 'aws-sdk'
+import {AuthContext, AuthContextType} from '@/authcontext'
+import {AuthService} from "@/authservice";
 
 /**
  * An Authentication Provider for Cognito authentication tokens
  */
-export interface CognitoAuthNService<U extends User, T extends Tenant> {
+
+export interface CognitoAuthCredential extends AuthCredential {
+	cognitoId?: string
+}
+
+export interface CognitoAuthNService<
+	U extends User,
+	C extends CognitoAuthCredential
+> extends AuthService {
+
 	cognitoConfig: {
 		region: string
 		userPool: string
 		identityPoolId: string
 	}
-	findUserByCognitoId(cognitoId: string, tenant?: Tenant): Promise<U>
+
+	findUserMatchingCredentials(cred: C): Promise<U>
 }
 
-export class CognitoAuthenticator<U extends User, T extends Tenant>
-	implements Authenticator<U, T> {
+
+export class CognitoAuthenticator<
+	U extends User,
+	C extends CognitoAuthCredential,
+	A extends AuthContext<U>
+> implements Authenticator<U, C, A> {
 	/* CONSTRUCTOR */
-	constructor(protected auth: CognitoAuthNService<U, T>) {}
+	constructor(
+		protected auth: CognitoAuthNService<U, C>
+	) {}
 
 	/**
 	 * Return the Indentity Request object
@@ -39,18 +56,16 @@ export class CognitoAuthenticator<U extends User, T extends Tenant>
 	/**
 	 * Authenticate a KOA request context
 	 */
-	async generateAuthContext(
-		credentials: Credentials<T>
-	): Promise<AuthContext<U, T>> {
+	async generateAuthContext(cred: C): Promise<A> {
 		// NULL Safety
-		assert(credentials.identity, 'Missing token')
+		assert(cred.identity, 'Missing cognito token')
 
 		// Get the ID from the Identity Pool
 		let user: U
 		try {
 			const cognitoId = await new Promise<string>((resolve, reject) => {
 				this.identityPool.getId(
-					this.makeIdentityRequest(credentials.identity),
+					this.makeIdentityRequest(cred.identity),
 					(err, data) => {
 						if (err) {
 							return reject(err)
@@ -61,18 +76,26 @@ export class CognitoAuthenticator<U extends User, T extends Tenant>
 			})
 
 			// Fetch user for the Given Cognito Id
-			user = await this.auth.findUserByCognitoId(cognitoId)
+
+			user = await this.auth.findUserMatchingCredentials({
+				...cred as object,
+				cognitoId: cognitoId
+			} as C)
 		} catch (err) {
 			throw new AuthError('Problem with Cognito AuthN', err)
 		}
 
 		// If user not found
 		if (!user) {
-			throw new AuthError('Problem finding User', credentials)
+			throw new AuthError('Problem finding User', cred)
 		}
 
 		// Return user
-		return AuthContext.User<U, T>(user, credentials.tenant, {})
+		return (new AuthContext<U>(AuthContextType.USER, user)) as A
+	}
+
+	async generateGuestContext(): Promise<A> {
+		return (new AuthContext<User>()) as A
 	}
 
 	/* PRIVATE METHODS */

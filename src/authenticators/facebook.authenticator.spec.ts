@@ -1,19 +1,20 @@
 import { FacebookAuthenticator } from './facebook.authenticator'
 import { AuthService } from '@/authservice'
 import { User } from '@/types'
-import { CognitoAuthNService } from '@/authenticators/cognito.authenticator'
+import {CognitoAuthCredential, CognitoAuthNService} from '@/authenticators/cognito.authenticator'
+import {AuthContext} from "@/authcontext";
 
 /**
  * FacebookAuthenticator
  */
 describe('FacebookAuthenticator', () => {
-	let auth: CognitoAuthNService<User> = {
+	let auth: CognitoAuthNService<User, CognitoAuthCredential> = {
 		cognitoConfig: {
 			region: '',
 			userPool: '',
 			identityPoolId: ''
 		},
-		findUserByCognitoId(cognitoId: string): Promise<User> {
+		findUserMatchingCredentials(cred: CognitoAuthCredential): Promise<User> {
 			return Promise.resolve(null)
 		}
 	}

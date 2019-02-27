@@ -1,23 +1,19 @@
 import { assert } from 'that-koa-error'
 import { AuthError } from '@/errors'
-import { User, Tenant, Credentials } from '@/types'
-import { AuthService } from '@/authservice'
-import { AuthContext } from '@/authcontext'
-import { Authenticator } from '@/authenticator'
+import {User, AuthCredential} from '@/types'
+import {AuthContext, AuthContextType} from '@/authcontext'
+import {BasicAuthenticator, BasicAuthNService} from "@/authenticators/basic.authenticator";
 
 /**
  * An interface for an AuthService that provides all the necessary
  * methods for Basic authentication
  */
 export interface PasswordAuthNUser extends User {
-	passwordMatches?(passkey: string): Promise<boolean>
+	passwordMatches?(passkey: any): Promise<boolean>
 }
 
-export interface PasswordAuthNService<
-	U extends PasswordAuthNUser,
-	T extends Tenant
-> extends AuthService {
-	findUserByIdentity(identity: string, tenant?: T): Promise<U>
+export interface PasswordAuthCredential extends AuthCredential {
+	passkey: any
 }
 
 /**
@@ -25,36 +21,39 @@ export interface PasswordAuthNService<
  */
 export class PasswordAuthenticator<
 	U extends PasswordAuthNUser,
-	T extends Tenant
-> implements Authenticator<U, T> {
-	constructor(private auth: PasswordAuthNService<U, T>) {}
+	C extends PasswordAuthCredential,
+	A extends AuthContext<U>
+> extends BasicAuthenticator<U, C, A> {
+
+	constructor(
+		protected auth: BasicAuthNService<U, C>
+	) {
+		super(auth)
+	}
 
 	/**
 	 * Authenticate a KOA request context
 	 */
-	async generateAuthContext(
-		credentials: Credentials<T>
-	): Promise<AuthContext<U, T>> {
+	async generateAuthContext(cred: C): Promise<A> {
 		// NULL Safety
-		assert(credentials.identity, 'Missing token')
+		assert(cred.identity, 'Missing identity')
+		assert(cred.passkey, 'Missing passkey')
 
 		// Find User
-		const user: U = await this.auth.findUserByIdentity(
-			credentials.identity,
-			credentials.tenant
-		)
+		const user: U = await this.auth.findUserMatchingCredentials(cred)
+		const data: any = { token: cred.identity }
 
-		// Was the User found?
+		// Guest
 		if (!user) {
 			throw new AuthError('User not found')
 		}
 
 		// Does the User's password match?
-		if (!(await user.passwordMatches(credentials.passkey))) {
+		if (!(await user.passwordMatches(cred.passkey))) {
 			throw new AuthError('Passwords did not match')
 		}
 
-		// We are authenticated
-		return AuthContext.User<U, T>(user, credentials.tenant, {})
+		// User
+		return (new AuthContext(AuthContextType.USER, user, data)) as A
 	}
 }
