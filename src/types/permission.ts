@@ -1,6 +1,5 @@
 /**
  * A type interface for Permissions
  */
-export type Permission = {}
-
+export interface Permission {}
 export const ExamplePermission: Permission = {}

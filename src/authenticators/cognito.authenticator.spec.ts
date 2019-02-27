@@ -1,6 +1,6 @@
 import { CognitoAuthenticator } from './cognito.authenticator'
 import { CognitoAuthNService } from '@/authenticators/cognito.authenticator'
-import { User } from '@/types'
+import { User, Tenant } from '@/types'
 import { expectAsyncToThrow } from 'that-koa-error'
 import { CognitoIdentity } from 'aws-sdk'
 
@@ -8,7 +8,7 @@ import { CognitoIdentity } from 'aws-sdk'
  * CognitoAuthenticator
  */
 describe('CognitoAuthenticator', () => {
-	let auth: CognitoAuthNService<User> = {
+	let auth: CognitoAuthNService<User, Tenant> = {
 		cognitoConfig: {
 			region: '',
 			userPool: '',
@@ -24,9 +24,7 @@ describe('CognitoAuthenticator', () => {
 	})
 
 	it('should make a valid IdentityRequest', async () => {
-		const req = new CognitoAuthenticator(auth).makeIdentityRequest({
-			request: { body: { token: 'abcd' } }
-		})
+		const req = new CognitoAuthenticator(auth).makeIdentityRequest('abcd')
 		expect(req).toBeDefined()
 	})
 })
@@ -35,7 +33,7 @@ describe('CognitoAuthenticator', () => {
  * CognitoAuthenticator
  */
 describe('CognitoAuthenticator.authenticate', () => {
-	let auth: CognitoAuthNService<User> = {
+	let auth: CognitoAuthNService<User, Tenant> = {
 			cognitoConfig: {
 				region: '',
 				userPool: '',
@@ -45,7 +43,7 @@ describe('CognitoAuthenticator.authenticate', () => {
 				.createSpy()
 				.and.returnValue(Promise.resolve({}))
 		},
-		authNoUsers: CognitoAuthNService<User> = {
+		authNoUsers: CognitoAuthNService<User, Tenant> = {
 			cognitoConfig: {
 				region: '',
 				userPool: '',
@@ -55,19 +53,18 @@ describe('CognitoAuthenticator.authenticate', () => {
 				.createSpy()
 				.and.returnValue(Promise.resolve(null))
 		}
+	let testTenant = { id: '1234' }
 
 	it('should handle nulls', async () => {
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(auth).authenticate(null)
+			new CognitoAuthenticator(auth).generateAuthContext(null)
 		)
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(auth).authenticate({
-				request: { body: {} }
-			})
+			new CognitoAuthenticator(auth).generateAuthContext({})
 		)
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(auth).authenticate({
-				request: { body: { tentantId: '1234' } }
+			new CognitoAuthenticator(auth).generateAuthContext({
+				tenant: testTenant
 			})
 		)
 	})
@@ -79,13 +76,8 @@ describe('CognitoAuthenticator.authenticate', () => {
 				cb('Error', null)
 			})
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(auth).authenticate({
-				request: {
-					body: {
-						tenantId: '1234',
-						token: 'abcd'
-					}
-				}
+			new CognitoAuthenticator(auth).generateAuthContext({
+				identity: 'abcd'
 			})
 		)
 	})
@@ -97,13 +89,8 @@ describe('CognitoAuthenticator.authenticate', () => {
 				cb(null, { IdentityId: '1234' })
 			})
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(authNoUsers).authenticate({
-				request: {
-					body: {
-						tenantId: '1234',
-						token: 'abcd'
-					}
-				}
+			new CognitoAuthenticator(authNoUsers).generateAuthContext({
+				identity: 'abcd'
 			})
 		)
 	})
@@ -114,13 +101,8 @@ describe('CognitoAuthenticator.authenticate', () => {
 			.and.callFake((id, cb) => {
 				cb(null, { IdentityId: '1234' })
 			})
-		const res = await new CognitoAuthenticator(auth).authenticate({
-			request: {
-				body: {
-					tenantId: '1234',
-					token: 'abcd'
-				}
-			}
+		const res = await new CognitoAuthenticator(auth).generateAuthContext({
+			identity: 'abcd'
 		})
 		expect(res).toBeDefined()
 	})

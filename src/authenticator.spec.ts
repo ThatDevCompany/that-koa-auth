@@ -1,18 +1,23 @@
 import { Authenticator, ExampleAuthenticator } from './authenticator'
-import { User } from '@/types'
+import {AuthCredential, User} from '@/types'
+import {AuthContext} from "@/authcontext";
 
 /**
  * Authenticator
  */
 describe('Authenticator', () => {
+	const cred = {
+		identity: '1234'
+	}
+
 	it('should be a type interface', async () => {
 		const test: Authenticator<User> = {
-			async authenticate(ctx: any): Promise<{ user: User; data?: any }> {
+			async generateAuthContext(cred: AuthCredential): Promise<AuthContext<User>> {
 				return null
 			}
 		}
 		expect(test).toBeDefined()
 		expect(ExampleAuthenticator).toBeDefined()
-		expect(ExampleAuthenticator.authenticate(null)).toBeDefined()
+		expect(ExampleAuthenticator.generateAuthContext(null)).toBeDefined()
 	})
 })

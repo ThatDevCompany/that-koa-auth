@@ -1,5 +1,5 @@
-import { User, Permission, Role } from '@/types'
-import { Context } from '@/context'
+import { User, Permission, Role, Tenant } from '@/types'
+import { AuthContext } from '@/authcontext'
 import { AuthService } from '@/authservice'
 import { Authorizer } from '@/authorizer'
 
@@ -12,44 +12,44 @@ export interface BasicAuthZRole extends Role {
 	hasPermission(permission: Permission): boolean
 }
 
-export interface BasicAuthZService<R extends BasicAuthZRole>
+export interface BasicAuthZService<U extends User, T extends Tenant, R extends BasicAuthZRole>
 	extends AuthService {
-	getRolesForContext(uctx: Context): Promise<Array<R>>
+	getRolesForContext(auth: AuthContext<U, T>): Promise<R[]>
 }
 
 /**
  * A simple roles and permissions authorizer
  */
-export class BasicAuthorizer<R extends BasicAuthZRole> implements Authorizer {
-	constructor(private auth: BasicAuthZService<R>) {}
+export class BasicAuthorizer<U extends User, T extends Tenant, R extends BasicAuthZRole> implements Authorizer<U, T> {
+	constructor(private auth: BasicAuthZService<U, T, R>) {}
 
 	async authorize(
-		uctx: Context,
-		permissions: Array<Permission>
+		auth: AuthContext<U, T>,
+		permissions: Permission[]
 	): Promise<boolean> {
 		// NULL Safety
-		if (!uctx || !(uctx instanceof Context)) {
+		if (!auth || !(auth instanceof AuthContext)) {
 			return false
 		}
 
 		// If no permissions are specified,
 		// then authorization is NOT granted to GUESTS
 		if (!permissions || !permissions.length) {
-			return uctx.isUser || uctx.isSystem
+			return auth.isUser || auth.isSystem
 		}
 
 		// System Users always have permissions
-		if (uctx.isSystem) {
+		if (auth.isSystem) {
 			return true
 		}
 
 		// Guests never have permissions
-		if (uctx.isGuest) {
+		if (auth.isGuest) {
 			return false
 		}
 
 		// Load the User
-		const roles = await this.auth.getRolesForContext(uctx)
+		const roles = await this.auth.getRolesForContext(auth)
 
 		// Fail if there is a required permission that
 		// is not met by any of the user's roles

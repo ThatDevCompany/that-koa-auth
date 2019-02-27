@@ -16,14 +16,18 @@ export class oaiAuthZ extends oaiRouter.Plugin {
 	 * Setup the Plugin options
 	 */
 	async handler(docOptions) {
-		const { endpoint } = docOptions
-
+		const { endpoint, fieldValue } = docOptions
 		const { authorizer } = this.args
 
 		/* The Middleware itself */
 		return async (ctx, next) => {
 			// Authorize the user
-			if (!(await authorizer.authorize(ctx.uctx, []))) {
+			if (
+				!(await authorizer.authorize(
+					ctx.auth,
+					fieldValue === true ? [] : fieldValue
+				))
+			) {
 				throw new AuthError(`Unauthorized access to ${endpoint}`)
 			}
 			return next()

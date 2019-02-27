@@ -20,7 +20,7 @@ describe('oaiAuthZ', () => {
 		}
 		const handler = await oai.handler({ endpoint: '' })
 		const next = jasmine.createSpy('next')
-		await expectAsyncToThrow(() => handler({ uctx: {} }, next))
+		await expectAsyncToThrow(() => handler({ auth: {} }, next))
 		expect(next).not.toHaveBeenCalled()
 	})
 
@@ -35,7 +35,7 @@ describe('oaiAuthZ', () => {
 		}
 		const handler = await oai.handler({ endpoint: '' })
 		const next = jasmine.createSpy('next')
-		await handler({ uctx: {} }, next)
+		await handler({ auth: {} }, next)
 		expect(next).toHaveBeenCalled()
 	})
 })

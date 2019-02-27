@@ -1,6 +1,4 @@
 import { Authorizer, ExampleAuthorizer } from './authorizer'
-import { Context } from '@/context'
-import { Permission } from '@/types'
 
 /**
  * Authorizer

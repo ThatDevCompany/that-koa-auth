@@ -13,7 +13,7 @@ describe('FacebookAuthenticator', () => {
 			userPool: '',
 			identityPoolId: ''
 		},
-		findUserByCognitoId(tenantId: string, cognitoId: string): Promise<User> {
+		findUserByCognitoId(cognitoId: string): Promise<User> {
 			return Promise.resolve(null)
 		}
 	}

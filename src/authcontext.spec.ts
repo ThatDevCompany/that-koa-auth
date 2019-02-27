@@ -1,12 +1,14 @@
-import { Context, ContextType } from './context'
+import { AuthContext, AuthContextType } from './authcontext'
+import { User } from '@/types'
 
 /**
  * Tests for Context
  */
 describe('Context', () => {
-	const userContext = new Context(ContextType.USER, '123', '123')
-	const systemContext = new Context(ContextType.SYSTEM)
-	const guestContext = new Context()
+	const testUser: User = { id: '1234' }
+	const userContext = new AuthContext(AuthContextType.USER, testUser)
+	const systemContext = new AuthContext(AuthContextType.SYSTEM)
+	const guestContext = new AuthContext()
 
 	/**
 	 * General Tests
@@ -35,15 +37,4 @@ describe('Context', () => {
 		expect(guestContext.isGuest).toBeTruthy()
 	})
 
-	it('should generate a system context', async () => {
-		expect(Context.System()).toBeDefined()
-	})
-
-	it('should generate a guest context', async () => {
-		expect(Context.Guest()).toBeDefined()
-	})
-
-	it('should generate a user context', async () => {
-		expect(Context.User('1234')).toBeDefined()
-	})
 })

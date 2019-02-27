@@ -1,20 +1,16 @@
 import { User } from '@/types'
-import { Context } from '@/context'
+import { AuthContext } from '@/authcontext'
 import { Permission } from '@/types'
-import { AuthService } from '@/authservice'
 
 /**
  * An AuthZ plugin interface
  */
-export interface Authorizer {
-	authorize(uctx: Context, permissions: Array<Permission>): Promise<boolean>
+export interface Authorizer<U extends User> {
+	authorize(auth: AuthContext<U>, permissions: Permission[]): Promise<boolean>
 }
 
-export const ExampleAuthorizer: Authorizer = {
-	async authorize(
-		uctx: Context,
-		permissions: Array<Permission>
-	): Promise<boolean> {
+export const ExampleAuthorizer: Authorizer<User> = {
+	async authorize(auth: AuthContext<User>, permissions: Permission[]): Promise<boolean> {
 		return false
 	}
 }

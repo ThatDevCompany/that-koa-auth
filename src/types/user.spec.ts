@@ -6,8 +6,7 @@ import { User, ExampleUser } from './user'
 describe('User', () => {
 	it('should be a type interface', async () => {
 		const test: User = {
-			id: '123',
-			tenantId: '123'
+			id: '123'
 		}
 		expect(test).toBeDefined()
 		expect(ExampleUser).toBeDefined()

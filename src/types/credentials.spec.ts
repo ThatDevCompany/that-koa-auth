@@ -7,7 +7,6 @@ describe('Credentials', () => {
 	it('should be a type interface', async () => {
 		const test: Credentials = {
 			provider: 'provider',
-			tenantId: 'tenantId',
 			identity: 'identity',
 			passkey: 'passkey'
 		}

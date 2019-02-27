@@ -1,5 +1,5 @@
 import { koaAuthN } from './koa'
-import { Context } from '@/context'
+import { Authcontext } from '@/context'
 import { Authenticator } from '@/authenticator'
 import { User } from '@/types'
 
@@ -15,7 +15,7 @@ describe('Context', () => {
 	let auth: Authenticator<User> = {
 		async authenticate(ctx: any): Promise<{ user: any }> {
 			return Promise.resolve({
-				user: { id: '1234', tenantId: '2345' },
+				user: { id: '1234' },
 				data: null
 			})
 		}
@@ -34,33 +34,33 @@ describe('Context', () => {
 
 	it('should call authenticateToken and attach the context to the request', async () => {
 		const test = koaAuthN(noAuth)
-		const ctx = { headers: {}, query: {}, uctx: null }
+		const ctx = { headers: {}, query: {}, auth: null }
 		const next = jasmine.createSpy('next')
 		spyOn(noAuth, 'authenticate').and.returnValue(
-			Promise.resolve(Context.Guest())
+			Promise.resolve(Authcontext.Guest())
 		)
 		await test(ctx, next)
-		expect(ctx.uctx).toBeDefined()
+		expect(ctx.auth).toBeDefined()
 		expect(next.calls.count()).toBe(1)
 	})
 
 	it('should attach a guest context if authentication fails', async () => {
 		const test = koaAuthN(noAuth)
-		const ctx = { headers: {}, query: {}, uctx: null }
+		const ctx = { headers: {}, query: {}, auth: null }
 		const next = jasmine.createSpy('next')
 		await test(ctx, next)
-		expect(ctx.uctx).toBeDefined()
-		expect(ctx.uctx.isGuest).toBeTruthy()
+		expect(ctx.auth).toBeDefined()
+		expect(ctx.auth.isGuest).toBeTruthy()
 		expect(next.calls.count()).toBe(1)
 	})
 
 	it('should attach a user context if authentication succeeds', async () => {
 		const test = koaAuthN(auth)
-		const ctx = { headers: {}, query: {}, uctx: null }
+		const ctx = { headers: {}, query: {}, auth: null }
 		const next = jasmine.createSpy('next')
 		await test(ctx, next)
-		expect(ctx.uctx).toBeDefined()
-		expect(ctx.uctx.isUser).toBeTruthy()
+		expect(ctx.auth).toBeDefined()
+		expect(ctx.auth.isUser).toBeTruthy()
 		expect(next.calls.count()).toBe(1)
 	})
 })

@@ -1,14 +1,15 @@
-import { User } from '@/types'
+import { User, AuthCredential } from '@/types'
+import { AuthContext } from './authcontext'
 
 /**
  * An AuthN plugin interface
  */
 export interface Authenticator<U extends User> {
-	authenticate(ctx: any): Promise<{ user: U; data?: any }>
+	generateAuthContext(credential: AuthCredential): Promise<AuthContext<U>>
 }
 
 export const ExampleAuthenticator: Authenticator<User> = {
-	async authenticate(ctx: any): Promise<{ user: User }> {
+	async generateAuthContext(credential: AuthCredential): Promise<AuthContext<User>> {
 		return null
 	}
 }

@@ -1,7 +1,8 @@
+import { assert } from 'that-koa-error'
 import { AuthError } from '@/errors'
-import { User } from '@/types'
+import {User, Tenant, Credentials} from '@/types'
 import { AuthService } from '@/authservice'
-import { Context } from '@/context'
+import { AuthContext } from '@/authcontext'
 import { Authenticator } from '@/authenticator'
 
 /**
@@ -12,29 +13,27 @@ export interface PasswordAuthNUser extends User {
 	passwordMatches?(passkey: string): Promise<boolean>
 }
 
-export interface PasswordAuthNService<U extends PasswordAuthNUser>
+export interface PasswordAuthNService<U extends PasswordAuthNUser, T extends Tenant>
 	extends AuthService {
-	findUserByIdentity(tenantId: string, identity: string): Promise<U>
+	findUserByIdentity(identity: string, tenant?: T): Promise<U>
 }
 
 /**
  * An Authentication Provider for Username + Password auth
  */
-export class PasswordAuthenticator<U extends PasswordAuthNUser>
-	implements Authenticator<U> {
-	constructor(private auth: PasswordAuthNService<U>) {}
+export class PasswordAuthenticator<U extends PasswordAuthNUser, T extends Tenant>
+	implements Authenticator<U, T> {
+	constructor(private auth: PasswordAuthNService<U, T>) {}
 
 	/**
 	 * Authenticate a KOA request context
 	 */
-	async authenticate(ctx: any): Promise<{ user: U }> {
-		let user: U
+	async generateAuthContext(credentials: Credentials<T>): Promise<AuthContext<U, T>> {
+		// NULL Safety
+		assert(credentials.identity, 'Missing token')
 
-		// Find User by their identity
-		user = await this.auth.findUserByIdentity(
-			ctx.request.body.tenantId,
-			ctx.request.body.identity
-		)
+		// Find User
+		const user: U = await this.auth.findUserByIdentity(credentials.identity, credentials.tenant)
 
 		// Was the User found?
 		if (!user) {
@@ -42,11 +41,11 @@ export class PasswordAuthenticator<U extends PasswordAuthNUser>
 		}
 
 		// Does the User's password match?
-		if (!(await user.passwordMatches(ctx.request.body.passkey))) {
+		if (!(await user.passwordMatches(credentials.passkey))) {
 			throw new AuthError('Passwords did not match')
 		}
 
 		// We are authenticated
-		return { user }
+		return AuthContext.User<U, T>(user, credentials.tenant, {})
 	}
 }

@@ -3,19 +3,20 @@ import {
 	BasicAuthZService,
 	BasicAuthZRole
 } from './basic.authorizer'
-import { Context } from '@/context'
+import { User, Tenant } from '@/types'
+import { AuthContext } from '@/authcontext'
 
 /**
  * BasicAuthorizer
  */
 describe('BasicAuthorizer', () => {
-	let auth: BasicAuthZService<BasicAuthZRole> = {
-			getRolesForContext(uctx: Context): Promise<Array<BasicAuthZRole>> {
+	let auth: BasicAuthZService<User, Tenant, BasicAuthZRole> = {
+			getRolesForContext(auth: AuthContext<User, Tenant>): Promise<BasicAuthZRole[]> {
 				return [] as any
 			}
 		},
-		authGoodRoles: BasicAuthZService<BasicAuthZRole> = {
-			getRolesForContext(uctx: Context): Promise<Array<BasicAuthZRole>> {
+		authGoodRoles: BasicAuthZService<User, Tenant, BasicAuthZRole> = {
+			getRolesForContext(auth: AuthContext<User, Tenant>): Promise<BasicAuthZRole[]> {
 				return [
 					{
 						hasPermission: () => true
@@ -23,8 +24,8 @@ describe('BasicAuthorizer', () => {
 				] as any
 			}
 		},
-		authBadRoles: BasicAuthZService<BasicAuthZRole> = {
-			getRolesForContext(uctx: Context): Promise<Array<BasicAuthZRole>> {
+		authBadRoles: BasicAuthZService<User, Tenant, BasicAuthZRole> = {
+			getRolesForContext(auth: AuthContext<User, Tenant>): Promise<BasicAuthZRole[]> {
 				return [
 					{
 						hasPermission: () => false
@@ -32,6 +33,7 @@ describe('BasicAuthorizer', () => {
 				] as any
 			}
 		}
+	let testTenant = { id: '1234' }
 	let res
 
 	it('should be instantiable', async () => {
@@ -44,30 +46,30 @@ describe('BasicAuthorizer', () => {
 	})
 
 	it('should return true if user or system context and no permissions', async () => {
-		res = await new BasicAuthorizer(auth).authorize(Context.System(), [])
+		res = await new BasicAuthorizer(auth).authorize(AuthContext.System<User, Tenant>(), [])
 		expect(res).toBeTruthy()
-		res = await new BasicAuthorizer(auth).authorize(Context.User('1234'), [])
+		res = await new BasicAuthorizer(auth).authorize(AuthContext.User<User, Tenant>(testTenant), [])
 		expect(res).toBeTruthy()
 	})
 
 	it('should return true if system needing permissions', async () => {
-		res = await new BasicAuthorizer(auth).authorize(Context.System(), [{}])
+		res = await new BasicAuthorizer(auth).authorize(AuthContext.System<User, Tenant>(), [{}])
 		expect(res).toBeTruthy()
 	})
 
 	it('should return false if guest needing permissions', async () => {
-		res = await new BasicAuthorizer(auth).authorize(Context.Guest(), [{}])
+		res = await new BasicAuthorizer(auth).authorize(AuthContext.Guest<User, Tenant>(), [{}])
 		expect(res).toBeFalsy()
 	})
 
 	it('should return false if user needs permissions but has no roles', async () => {
-		res = await new BasicAuthorizer(auth).authorize(Context.User('1234'), [{}])
+		res = await new BasicAuthorizer(auth).authorize(AuthContext.User<User, Tenant>(testTenant), [{}])
 		expect(res).toBeFalsy()
 	})
 
 	it('should return false if user needs permissions but doesnt have them', async () => {
 		res = await new BasicAuthorizer(authBadRoles).authorize(
-			Context.User('1234'),
+			AuthContext.User<User, Tenant>(testTenant),
 			[{}]
 		)
 		expect(res).toBeFalsy()
@@ -75,7 +77,7 @@ describe('BasicAuthorizer', () => {
 
 	it('should return true  if user has needed permissions', async () => {
 		res = await new BasicAuthorizer(authGoodRoles).authorize(
-			Context.User('1234'),
+			AuthContext.User<User, Tenant>(testTenant),
 			[{}]
 		)
 		expect(res).toBeTruthy()

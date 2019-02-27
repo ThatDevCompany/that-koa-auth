@@ -5,10 +5,8 @@ import { Role } from './role'
  */
 export type User = {
 	id: string
-	tenantId: string
 }
 
 export const ExampleUser: User = {
-	id: '123',
-	tenantId: '123'
+	id: '123'
 }

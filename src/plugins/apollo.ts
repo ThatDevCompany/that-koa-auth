@@ -9,11 +9,11 @@ export function apolloAuthZ<U extends User>(
 	authorizer: Authorizer,
 	fnc: (a, b, c) => any
 ) {
-	return async (x, y, uctx) => {
-		if (!authorizer || !(await authorizer.authorize(uctx, []))) {
+	return async (x, y, auth) => {
+		if (!authorizer || !(await authorizer.authorize(auth, []))) {
 			throw new AuthError('Unauthorized Access')
 		}
-		return fnc(x, y, uctx)
+		return fnc(x, y, auth)
 	}
 }
 
@@ -22,5 +22,5 @@ export function apolloAuthZ<U extends User>(
  * into the resolvers for later AuthZ
  */
 export function apolloContext() {
-	return ({ ctx }) => ctx.uctx
+	return ({ ctx }) => ctx.auth
 }

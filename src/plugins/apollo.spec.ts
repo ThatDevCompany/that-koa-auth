@@ -43,7 +43,7 @@ describe('apolloAuthZ', () => {
 describe('apolloContext', () => {
 	it('should return a function to extract the auth context from an apollo context', async () => {
 		const fnc = apolloContext(),
-			uctx = {}
-		expect(fnc({ ctx: { uctx } })).toBe(uctx)
+			auth = {}
+		expect(fnc({ ctx: { auth } })).toBe(auth)
 	})
 })
