@@ -1,23 +1,39 @@
-import { koaAuthN } from './koa'
-import { Authcontext } from '@/context'
+import { KoaAuthCredentialGenerator, koaAuthN } from './koa'
+import { AuthContext, AuthContextType } from '@/authcontext'
 import { Authenticator } from '@/authenticator'
-import { User } from '@/types'
+import { AuthCredential, User } from '@/types'
 
 /**
  * Tests for Context
  */
 describe('Context', () => {
-	let noAuth: Authenticator<User> = {
-		async authenticate(ctx: any): Promise<{ user: User }> {
+	let noAuth: Authenticator<User, AuthCredential, AuthContext<User>> = {
+		async generateAuthContext(
+			cred: AuthCredential
+		): Promise<AuthContext<User>> {
+			return null
+		},
+		async generateGuestContext(): Promise<AuthContext<User>> {
 			return null
 		}
 	}
-	let auth: Authenticator<User> = {
-		async authenticate(ctx: any): Promise<{ user: any }> {
-			return Promise.resolve({
-				user: { id: '1234' },
-				data: null
-			})
+	let auth: Authenticator<User, AuthCredential, AuthContext<User>> = {
+		async generateAuthContext(
+			cred: AuthCredential
+		): Promise<AuthContext<User>> {
+			return Promise.resolve(
+				new AuthContext(AuthContextType.USER, { id: '1234' })
+			)
+		},
+		async generateGuestContext(): Promise<AuthContext<User>> {
+			return Promise.resolve(new AuthContext())
+		}
+	}
+	let koaAuthCredentialsGenerator: KoaAuthCredentialGenerator<
+		AuthCredential
+	> = {
+		generateCredentialFromKoaContext(ctx: any): AuthCredential {
+			return { identity: '1234' }
 		}
 	}
 
@@ -27,25 +43,13 @@ describe('Context', () => {
 	it('should be a middleware factory', async () => {
 		expect(koaAuthN).toBeDefined()
 		expect(typeof koaAuthN).toBe('function')
-		const test = koaAuthN(noAuth)
+		const test = koaAuthN(koaAuthCredentialsGenerator, noAuth)
 		expect(test).toBeDefined()
 		expect(typeof test).toBe('function')
 	})
 
-	it('should call authenticateToken and attach the context to the request', async () => {
-		const test = koaAuthN(noAuth)
-		const ctx = { headers: {}, query: {}, auth: null }
-		const next = jasmine.createSpy('next')
-		spyOn(noAuth, 'authenticate').and.returnValue(
-			Promise.resolve(Authcontext.Guest())
-		)
-		await test(ctx, next)
-		expect(ctx.auth).toBeDefined()
-		expect(next.calls.count()).toBe(1)
-	})
-
 	it('should attach a guest context if authentication fails', async () => {
-		const test = koaAuthN(noAuth)
+		const test = koaAuthN(koaAuthCredentialsGenerator, noAuth)
 		const ctx = { headers: {}, query: {}, auth: null }
 		const next = jasmine.createSpy('next')
 		await test(ctx, next)
@@ -55,7 +59,7 @@ describe('Context', () => {
 	})
 
 	it('should attach a user context if authentication succeeds', async () => {
-		const test = koaAuthN(auth)
+		const test = koaAuthN(koaAuthCredentialsGenerator, auth)
 		const ctx = { headers: {}, query: {}, auth: null }
 		const next = jasmine.createSpy('next')
 		await test(ctx, next)

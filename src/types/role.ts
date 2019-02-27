@@ -1,5 +1,3 @@
-import { Permission } from './permission'
-
 /**
  * A type interface for Roles
  */

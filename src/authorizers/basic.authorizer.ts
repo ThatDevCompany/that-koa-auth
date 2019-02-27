@@ -12,15 +12,22 @@ export interface BasicAuthZRole extends Role {
 	hasPermission(permission: Permission): boolean
 }
 
-export interface BasicAuthZService<U extends User, T extends Tenant, R extends BasicAuthZRole>
-	extends AuthService {
+export interface BasicAuthZService<
+	U extends User,
+	T extends Tenant,
+	R extends BasicAuthZRole
+> extends AuthService {
 	getRolesForContext(auth: AuthContext<U, T>): Promise<R[]>
 }
 
 /**
  * A simple roles and permissions authorizer
  */
-export class BasicAuthorizer<U extends User, T extends Tenant, R extends BasicAuthZRole> implements Authorizer<U, T> {
+export class BasicAuthorizer<
+	U extends User,
+	T extends Tenant,
+	R extends BasicAuthZRole
+> implements Authorizer<U, T> {
 	constructor(private auth: BasicAuthZService<U, T, R>) {}
 
 	async authorize(

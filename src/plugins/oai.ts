@@ -1,15 +1,20 @@
 import * as oaiRouter from 'koa-oai-router'
 import { AuthError } from '@/errors'
 import { Authorizer } from '@/authorizer'
+import { User } from '@/types'
+import { AuthContext } from '@/authcontext'
 
 /**
  * An Authentication plugin for the Koa OpenAPI Router system
  */
-export class oaiAuthZ extends oaiRouter.Plugin {
+export class oaiAuthZ<
+	U extends User,
+	A extends AuthContext<U>
+> extends oaiRouter.Plugin {
 	pluginName = 'auth'
 	field = 'x-oai-auth' // Any endpoint marked with x-oai-auth will have authz enforced
 	args: {
-		authorizer: Authorizer
+		authorizer: Authorizer<U, A>
 	}
 
 	/**

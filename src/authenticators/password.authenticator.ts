@@ -1,6 +1,6 @@
 import { assert } from 'that-koa-error'
 import { AuthError } from '@/errors'
-import {User, Tenant, Credentials} from '@/types'
+import { User, Tenant, Credentials } from '@/types'
 import { AuthService } from '@/authservice'
 import { AuthContext } from '@/authcontext'
 import { Authenticator } from '@/authenticator'
@@ -13,27 +13,36 @@ export interface PasswordAuthNUser extends User {
 	passwordMatches?(passkey: string): Promise<boolean>
 }
 
-export interface PasswordAuthNService<U extends PasswordAuthNUser, T extends Tenant>
-	extends AuthService {
+export interface PasswordAuthNService<
+	U extends PasswordAuthNUser,
+	T extends Tenant
+> extends AuthService {
 	findUserByIdentity(identity: string, tenant?: T): Promise<U>
 }
 
 /**
  * An Authentication Provider for Username + Password auth
  */
-export class PasswordAuthenticator<U extends PasswordAuthNUser, T extends Tenant>
-	implements Authenticator<U, T> {
+export class PasswordAuthenticator<
+	U extends PasswordAuthNUser,
+	T extends Tenant
+> implements Authenticator<U, T> {
 	constructor(private auth: PasswordAuthNService<U, T>) {}
 
 	/**
 	 * Authenticate a KOA request context
 	 */
-	async generateAuthContext(credentials: Credentials<T>): Promise<AuthContext<U, T>> {
+	async generateAuthContext(
+		credentials: Credentials<T>
+	): Promise<AuthContext<U, T>> {
 		// NULL Safety
 		assert(credentials.identity, 'Missing token')
 
 		// Find User
-		const user: U = await this.auth.findUserByIdentity(credentials.identity, credentials.tenant)
+		const user: U = await this.auth.findUserByIdentity(
+			credentials.identity,
+			credentials.tenant
+		)
 
 		// Was the User found?
 		if (!user) {

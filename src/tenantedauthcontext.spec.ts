@@ -1,4 +1,5 @@
-import { AuthContext, AuthContextType } from './authcontext'
+import { TenantedAuthContext } from './tenantedauthcontext'
+import { AuthContextType } from './authcontext'
 import { User } from '@/types'
 
 /**
@@ -6,9 +7,9 @@ import { User } from '@/types'
  */
 describe('Context', () => {
 	const testUser: User = { id: '1234' }
-	const userContext = new AuthContext(AuthContextType.USER, testUser)
-	const systemContext = new AuthContext(AuthContextType.SYSTEM)
-	const guestContext = new AuthContext()
+	const userContext = new TenantedAuthContext(AuthContextType.USER, testUser)
+	const systemContext = new TenantedAuthContext(AuthContextType.SYSTEM)
+	const guestContext = new TenantedAuthContext()
 
 	/**
 	 * General Tests

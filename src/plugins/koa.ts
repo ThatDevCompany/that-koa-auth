@@ -1,36 +1,39 @@
 import { AuthContext } from '@/authcontext'
-import { User, Tenant } from '@/types'
+import { AuthCredential, User } from '@/types'
 import { Authenticator } from '@/authenticator'
+
+/**
+ * Koa Auth Credential Generator
+ */
+export type KoaAuthCredentialGenerator<C extends AuthCredential> = {
+	generateCredentialFromKoaContext(ctx: any): C
+}
 
 /**
  * This middleware performs Authentication
  * It will attach a special Auth Context to the Request Context
  * Based on the AuthToken Id provided via request headers or the query string
  */
-export function koaAuthN<U extends User, T extends Tenant>(authenticator: Authenticator<U, T>) {
+export function koaAuthN<
+	U extends User,
+	C extends AuthCredential,
+	A extends AuthContext<U>
+>(
+	credentialGenerator: KoaAuthCredentialGenerator<C>,
+	authenticator: Authenticator<U, C, A>
+) {
 	return async (ctx, next) => {
-		let auth: AuthContext<U, T>
+		let auth: A
 
-		// Attempt to Create Context from Token Id
+		// Attempt to Create Context from the Credentials Provided
 		try {
-			const identity = (
-				ctx.headers['x-api-key'] ||
-				ctx.headers['authorization'] ||
-				ctx.query.token ||
-				''
+			auth = await authenticator.generateAuthContext(
+				credentialGenerator.generateCredentialFromKoaContext(ctx)
 			)
-				.split('Basic ')
-				.join('')
-				.split('Bearer ')
-				.join('')
-
-			const tenant = null
-
-			auth = await authenticator.generateAuthContext({ identity, tenant })
 
 			// Catch Errors
 		} catch (e) {
-			auth = AuthContext.Guest()
+			auth = await authenticator.generateGuestContext()
 		}
 
 		// Attach Context

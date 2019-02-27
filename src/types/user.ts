@@ -1,9 +1,7 @@
-import { Role } from './role'
-
 /**
  * A type interface for a User
  */
-export type User = {
+export interface User {
 	id: string
 }
 

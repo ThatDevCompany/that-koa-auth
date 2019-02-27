@@ -1,4 +1,6 @@
 import { oaiAuthZ } from './oai'
+import { User } from '@/types'
+import { AuthContext } from '@/authcontext'
 import { expectAsyncToThrow } from 'that-koa-error'
 
 /**
@@ -10,7 +12,7 @@ describe('oaiAuthZ', () => {
 	})
 
 	it('should have a handler which throws errors if unauthorized', async () => {
-		const oai = new oaiAuthZ()
+		const oai = new oaiAuthZ<User, AuthContext<User>>()
 		oai.args = {
 			authorizer: {
 				authorize() {
@@ -25,7 +27,7 @@ describe('oaiAuthZ', () => {
 	})
 
 	it('should have a handler which calls next if authorized', async () => {
-		const oai = new oaiAuthZ()
+		const oai = new oaiAuthZ<User, AuthContext<User>>()
 		oai.args = {
 			authorizer: {
 				authorize() {

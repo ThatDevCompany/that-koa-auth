@@ -3,7 +3,7 @@ import { Credentials, User, Tenant } from '@/types'
 import { AuthError } from '@/errors'
 import { Authenticator } from '@/authenticator'
 import { CognitoIdentity } from 'aws-sdk'
-import {AuthContext} from "@/authcontext";
+import { AuthContext } from '@/authcontext'
 
 /**
  * An Authentication Provider for Cognito authentication tokens
@@ -17,7 +17,8 @@ export interface CognitoAuthNService<U extends User, T extends Tenant> {
 	findUserByCognitoId(cognitoId: string, tenant?: Tenant): Promise<U>
 }
 
-export class CognitoAuthenticator<U extends User, T extends Tenant> implements Authenticator<U, T> {
+export class CognitoAuthenticator<U extends User, T extends Tenant>
+	implements Authenticator<U, T> {
 	/* CONSTRUCTOR */
 	constructor(protected auth: CognitoAuthNService<U, T>) {}
 
@@ -38,7 +39,9 @@ export class CognitoAuthenticator<U extends User, T extends Tenant> implements A
 	/**
 	 * Authenticate a KOA request context
 	 */
-	async generateAuthContext(credentials: Credentials<T>): Promise<AuthContext<U, T>> {
+	async generateAuthContext(
+		credentials: Credentials<T>
+	): Promise<AuthContext<U, T>> {
 		// NULL Safety
 		assert(credentials.identity, 'Missing token')
 
@@ -46,17 +49,19 @@ export class CognitoAuthenticator<U extends User, T extends Tenant> implements A
 		let user: U
 		try {
 			const cognitoId = await new Promise<string>((resolve, reject) => {
-				this.identityPool.getId(this.makeIdentityRequest(credentials.identity), (err, data) => {
-					if (err) {
-						return reject(err)
+				this.identityPool.getId(
+					this.makeIdentityRequest(credentials.identity),
+					(err, data) => {
+						if (err) {
+							return reject(err)
+						}
+						return resolve(data.IdentityId)
 					}
-					return resolve(data.IdentityId)
-				})
+				)
 			})
 
 			// Fetch user for the Given Cognito Id
 			user = await this.auth.findUserByCognitoId(cognitoId)
-
 		} catch (err) {
 			throw new AuthError('Problem with Cognito AuthN', err)
 		}
@@ -67,8 +72,7 @@ export class CognitoAuthenticator<U extends User, T extends Tenant> implements A
 		}
 
 		// Return user
-		return AuthContext.User<U, T>( user, credentials.tenant, {} )
-
+		return AuthContext.User<U, T>(user, credentials.tenant, {})
 	}
 
 	/* PRIVATE METHODS */

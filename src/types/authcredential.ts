@@ -1,8 +1,7 @@
-
 /**
  * A type interface for Credentials
  */
-export type AuthCredential = {
+export interface AuthCredential {
 	identity?: string
 }
 

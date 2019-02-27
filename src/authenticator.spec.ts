@@ -1,6 +1,6 @@
 import { Authenticator, ExampleAuthenticator } from './authenticator'
-import {AuthCredential, User} from '@/types'
-import {AuthContext} from "@/authcontext";
+import { AuthCredential, User } from '@/types'
+import { AuthContext } from '@/authcontext'
 
 /**
  * Authenticator
@@ -11,8 +11,13 @@ describe('Authenticator', () => {
 	}
 
 	it('should be a type interface', async () => {
-		const test: Authenticator<User> = {
-			async generateAuthContext(cred: AuthCredential): Promise<AuthContext<User>> {
+		const test: Authenticator<User, AuthCredential, AuthContext<User>> = {
+			async generateAuthContext(
+				cred: AuthCredential
+			): Promise<AuthContext<User>> {
+				return null
+			},
+			async generateGuestContext(): Promise<AuthContext<User>> {
 				return null
 			}
 		}

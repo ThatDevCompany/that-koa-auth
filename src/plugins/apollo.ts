@@ -1,12 +1,13 @@
 import { Authorizer } from '@/authorizer'
+import { AuthContext } from '@/authcontext'
 import { AuthError } from '@/errors'
 import { User } from '@/types'
 
 /**
  * Wrappers a Resolver with AuthZ
  */
-export function apolloAuthZ<U extends User>(
-	authorizer: Authorizer,
+export function apolloAuthZ<U extends User, A extends AuthContext<U>>(
+	authorizer: Authorizer<U, A>,
 	fnc: (a, b, c) => any
 ) {
 	return async (x, y, auth) => {
