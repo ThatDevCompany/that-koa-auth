@@ -17,7 +17,7 @@ export class AuthContext<U extends User> {
 	constructor(
 		public type: AuthContextType = AuthContextType.GUEST,
 		public user: U = null,
-		public data: object = {}
+		public data: any = {}
 	) {
 		assert(type != AuthContextType.USER || user, 'User missing in Context')
 	}

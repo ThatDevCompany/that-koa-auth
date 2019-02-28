@@ -12,17 +12,18 @@ describe('Authenticator', () => {
 
 	it('should be a type interface', async () => {
 		const test: Authenticator<User, AuthCredential, AuthContext<User>> = {
-			async generateAuthContext(
-				cred: AuthCredential
-			): Promise<AuthContext<User>> {
+			async userContext(cred: AuthCredential): Promise<AuthContext<User>> {
 				return null
 			},
-			async generateGuestContext(): Promise<AuthContext<User>> {
+			async systemContext(): Promise<AuthContext<User>> {
+				return null
+			},
+			async guestContext(): Promise<AuthContext<User>> {
 				return null
 			}
 		}
 		expect(test).toBeDefined()
 		expect(ExampleAuthenticator).toBeDefined()
-		expect(ExampleAuthenticator.generateAuthContext(null)).toBeDefined()
+		expect(ExampleAuthenticator.userContext(null)).toBeDefined()
 	})
 })

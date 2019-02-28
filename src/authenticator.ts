@@ -1,5 +1,5 @@
-import { User, AuthCredential } from '@/types'
-import { AuthContext } from './authcontext'
+import { AuthCredential, User } from '@/types'
+import { AuthContext, AuthContextType } from './authcontext'
 
 /**
  * An AuthN plugin interface
@@ -9,8 +9,9 @@ export interface Authenticator<
 	C extends AuthCredential,
 	A extends AuthContext<U>
 > {
-	generateAuthContext(credential: C): Promise<A>
-	generateGuestContext(): Promise<A>
+	userContext(credential: C, ...args): Promise<A>
+	systemContext(...args): Promise<A>
+	guestContext(...args): Promise<A>
 }
 
 export const ExampleAuthenticator: Authenticator<
@@ -18,13 +19,15 @@ export const ExampleAuthenticator: Authenticator<
 	AuthCredential,
 	AuthContext<User>
 > = {
-	async generateAuthContext(
-		credential: AuthCredential
-	): Promise<AuthContext<User>> {
-		return null
+	async userContext(credential: AuthCredential): Promise<AuthContext<User>> {
+		return new AuthContext(AuthContextType.USER, {} as User, null)
 	},
 
-	async generateGuestContext(): Promise<AuthContext<User>> {
-		return new AuthContext()
+	async systemContext(): Promise<AuthContext<User>> {
+		return new AuthContext(AuthContextType.SYSTEM, null, null)
+	},
+
+	async guestContext(): Promise<AuthContext<User>> {
+		return new AuthContext(AuthContextType.GUEST, null, null)
 	}
 }

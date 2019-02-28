@@ -1,6 +1,9 @@
 import { User } from '@/types'
-import {CognitoAuthCredential, CognitoAuthenticator} from '@/authenticators/cognito.authenticator'
-import {AuthContext} from "@/authcontext";
+import {
+	CognitoAuthCredential,
+	CognitoAuthenticator
+} from '@/authenticators/cognito.authenticator'
+import { AuthContext } from '@/authcontext'
 
 /**
  * An Authentication Provider for Facebook auth federated through Cognito
@@ -13,8 +16,8 @@ export class FacebookAuthenticator<
 	/**
 	 * Return the Indentity Request object
 	 */
-	public makeIdentityRequest(ctx: any) {
-		const c = this.auth.cognitoConfig
+	protected makeIdentityRequest(ctx: any) {
+		const c = this.authNService.cognitoConfig
 
 		return {
 			IdentityPoolId: c.identityPoolId,

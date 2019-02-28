@@ -1,10 +1,6 @@
 /**
  * A type interface for a User
  */
-export interface User {
-	id: string
-}
+export interface User {}
 
-export const ExampleUser: User = {
-	id: '123'
-}
+export const ExampleUser: User = {}

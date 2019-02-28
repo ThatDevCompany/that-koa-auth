@@ -1,4 +1,4 @@
-import { KoaAuthCredentialGenerator, koaAuthN } from './koa'
+import { KoaCredGenerator, koaAuthN } from './koa'
 import { AuthContext, AuthContextType } from '@/authcontext'
 import { Authenticator } from '@/authenticator'
 import { AuthCredential, User } from '@/types'
@@ -8,30 +8,30 @@ import { AuthCredential, User } from '@/types'
  */
 describe('Context', () => {
 	let noAuth: Authenticator<User, AuthCredential, AuthContext<User>> = {
-		async generateAuthContext(
-			cred: AuthCredential
-		): Promise<AuthContext<User>> {
+		async userContext(cred: AuthCredential): Promise<AuthContext<User>> {
 			return null
 		},
-		async generateGuestContext(): Promise<AuthContext<User>> {
+		async systemContext(): Promise<AuthContext<User>> {
+			return null
+		},
+		async guestContext(): Promise<AuthContext<User>> {
 			return null
 		}
 	}
 	let auth: Authenticator<User, AuthCredential, AuthContext<User>> = {
-		async generateAuthContext(
-			cred: AuthCredential
-		): Promise<AuthContext<User>> {
+		async userContext(cred: AuthCredential): Promise<AuthContext<User>> {
 			return Promise.resolve(
 				new AuthContext(AuthContextType.USER, { id: '1234' })
 			)
 		},
-		async generateGuestContext(): Promise<AuthContext<User>> {
+		async systemContext(): Promise<AuthContext<User>> {
+			return Promise.resolve(new AuthContext())
+		},
+		async guestContext(): Promise<AuthContext<User>> {
 			return Promise.resolve(new AuthContext())
 		}
 	}
-	let koaAuthCredentialsGenerator: KoaAuthCredentialGenerator<
-		AuthCredential
-	> = {
+	let koaAuthCredentialsGenerator: KoaCredGenerator<AuthCredential> = {
 		generateCredentialFromKoaContext(ctx: any): AuthCredential {
 			return { identity: '1234' }
 		}

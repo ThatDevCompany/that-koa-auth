@@ -1,18 +1,15 @@
-import {assert} from 'that-koa-error'
-import {AuthError} from '@/errors'
-import {AuthCredential, Tenant, User} from '@/types'
-import {AuthService} from '@/authservice'
-import {Authenticator} from '@/authenticator'
-import {AuthContext, AuthContextType} from '@/authcontext'
+import { assert } from 'that-koa-error'
+import { AuthError } from '@/errors'
+import { AuthCredential, User } from '@/types'
+import { Authenticator } from '@/authenticator'
+import { AuthContext, AuthContextType } from '@/authcontext'
+import { AuthService } from '@/authservice'
 
 /**
- * An interface for an AuthService that provides all the necessary
- * methods for Basic authentication
+ * An interface for an AuthService that provides Authentication
  */
-export interface BasicAuthNService<
-	U extends User,
-	C extends AuthCredential
-> extends AuthService {
+export interface BasicAuthNService<U extends User, C extends AuthCredential>
+	extends AuthService {
 	findUserMatchingCredentials(cred: C): Promise<U>
 }
 
@@ -24,22 +21,22 @@ export class BasicAuthenticator<
 	C extends AuthCredential,
 	A extends AuthContext<U>
 > implements Authenticator<U, C, A> {
-
 	/* CONSTRUCTOR */
 	constructor(
-		protected auth: BasicAuthNService<U, C>
+		protected ContextClass: { new (...args): A },
+		protected authNService: BasicAuthNService<U, C>
 	) {}
 
 	/**
 	 * Authenticate a set of credentials
 	 */
-	async generateAuthContext(cred: C): Promise<A> {
+	async userContext(cred: C, ...args): Promise<A> {
 		// NULL Safety
 		assert(cred.identity, 'Missing identity')
 
 		// Find User
-		const user: U = await this.auth.findUserMatchingCredentials(cred)
-		const data: any = { token: cred.identity }
+		const user: U = await this.authNService.findUserMatchingCredentials(cred)
+		const data: any = { identity: cred.identity }
 
 		// Guest
 		if (!user) {
@@ -47,10 +44,14 @@ export class BasicAuthenticator<
 		}
 
 		// User
-		return (new AuthContext(AuthContextType.USER, user, data)) as A
+		return new this.ContextClass(AuthContextType.USER, user, data, ...args)
 	}
 
-	async generateGuestContext(): Promise<A> {
-		return (new AuthContext<User>()) as A
+	async systemContext(...args): Promise<A> {
+		return new this.ContextClass(AuthContextType.SYSTEM, null, null, args)
+	}
+
+	async guestContext(...args): Promise<A> {
+		return new this.ContextClass(AuthContextType.GUEST, null, null, args)
 	}
 }

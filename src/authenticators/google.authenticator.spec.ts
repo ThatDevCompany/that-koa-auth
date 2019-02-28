@@ -1,6 +1,10 @@
 import { GoogleAuthenticator } from './google.authenticator'
-import {CognitoAuthCredential, CognitoAuthNService} from '@/authenticators/cognito.authenticator'
+import {
+	CognitoAuthCredential,
+	CognitoAuthNService
+} from '@/authenticators/cognito.authenticator'
 import { User } from '@/types'
+import { AuthContext } from '@/authcontext'
 
 /**
  * GoogleAuthenticator
@@ -18,13 +22,6 @@ describe('GoogleAuthenticator', () => {
 	}
 
 	it('should be instantiable', async () => {
-		expect(new GoogleAuthenticator(auth)).toBeDefined()
-	})
-
-	it('should make a valid IdentityRequest', async () => {
-		const req = new GoogleAuthenticator(auth).makeIdentityRequest({
-			request: { body: { token: 'abcd' } }
-		})
-		expect(req).toBeDefined()
+		expect(new GoogleAuthenticator(AuthContext, auth)).toBeDefined()
 	})
 })

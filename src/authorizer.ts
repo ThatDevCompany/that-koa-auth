@@ -1,6 +1,7 @@
 import { User } from '@/types'
 import { AuthContext } from '@/authcontext'
 import { Permission } from '@/types'
+import { AuthService } from '@/authservice'
 
 /**
  * An AuthZ plugin interface

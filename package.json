@@ -1,7 +1,7 @@
 {
     "name": "that-koa-auth",
     "description": "A lightweight and extendable AuthN and AuthZ library for Koa Applications",
-    "version": "1.0.6",
+    "version": "2.0.1",
     "license": "MIT",
     "repository": {
         "type": "git",

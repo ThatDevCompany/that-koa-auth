@@ -1,8 +1,11 @@
 import { assert } from 'that-koa-error'
 import { AuthError } from '@/errors'
-import {User, AuthCredential} from '@/types'
-import {AuthContext, AuthContextType} from '@/authcontext'
-import {BasicAuthenticator, BasicAuthNService} from "@/authenticators/basic.authenticator";
+import { User, AuthCredential } from '@/types'
+import { AuthContext, AuthContextType } from '@/authcontext'
+import {
+	BasicAuthenticator,
+	BasicAuthNService
+} from '@/authenticators/basic.authenticator'
 
 /**
  * An interface for an AuthService that provides all the necessary
@@ -24,23 +27,16 @@ export class PasswordAuthenticator<
 	C extends PasswordAuthCredential,
 	A extends AuthContext<U>
 > extends BasicAuthenticator<U, C, A> {
-
-	constructor(
-		protected auth: BasicAuthNService<U, C>
-	) {
-		super(auth)
-	}
-
 	/**
 	 * Authenticate a KOA request context
 	 */
-	async generateAuthContext(cred: C): Promise<A> {
+	async userContext(cred: C): Promise<A> {
 		// NULL Safety
 		assert(cred.identity, 'Missing identity')
 		assert(cred.passkey, 'Missing passkey')
 
 		// Find User
-		const user: U = await this.auth.findUserMatchingCredentials(cred)
+		const user: U = await this.authNService.findUserMatchingCredentials(cred)
 		const data: any = { token: cred.identity }
 
 		// Guest
@@ -54,6 +50,6 @@ export class PasswordAuthenticator<
 		}
 
 		// User
-		return (new AuthContext(AuthContextType.USER, user, data)) as A
+		return new this.ContextClass(AuthContextType.USER, user, data)
 	}
 }

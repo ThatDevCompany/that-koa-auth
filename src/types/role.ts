@@ -1,4 +1,4 @@
-import {Permission} from "@/types/permission";
+import { Permission } from '@/types/permission'
 
 /**
  * A type interface for Roles

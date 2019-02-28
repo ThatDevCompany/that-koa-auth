@@ -25,12 +25,13 @@ export class BasicAuthorizer<
 	P extends Permission,
 	A extends AuthContext<U>
 > implements Authorizer<U, A> {
-	constructor(
-		private auth: BasicAuthZService<U, R, P, A>
-	) {}
+	/* CONSTRUCTOR */
+	constructor(private auth: BasicAuthZService<U, R, P, A>) {}
 
-	async authorize(auth: A, permissions: P[]
-	): Promise<boolean> {
+	/**
+	 * Authorize that an AuthContext has permissions
+	 */
+	async authorize(auth: A, permissions: P[]): Promise<boolean> {
 		// NULL Safety
 		if (!auth) {
 			return false

@@ -1,22 +1,23 @@
-import {BasicAuthorizer, BasicAuthZService} from './basic.authorizer'
-import {Permission, Role, User} from '@/types'
-import {AuthContext, AuthContextType} from '@/authcontext'
+import { BasicAuthorizer, BasicAuthZService } from './basic.authorizer'
+import { Permission, Role, User } from '@/types'
+import { AuthContext, AuthContextType } from '@/authcontext'
 
 /**
  * BasicAuthorizer
  */
 describe('BasicAuthorizer', () => {
 	let auth: BasicAuthZService<User, Role, Permission, AuthContext<User>> = {
-			getRolesFromAuthContext(
-				auth: AuthContext<User>
-			): Promise<Role[]> {
+			getRolesFromAuthContext(auth: AuthContext<User>): Promise<Role[]> {
 				return [] as any
 			}
 		},
-		authGoodRoles: BasicAuthZService<User, Role, Permission, AuthContext<User>> = {
-			getRolesFromAuthContext(
-				auth: AuthContext<User>
-			): Promise<Role[]> {
+		authGoodRoles: BasicAuthZService<
+			User,
+			Role,
+			Permission,
+			AuthContext<User>
+		> = {
+			getRolesFromAuthContext(auth: AuthContext<User>): Promise<Role[]> {
 				return [
 					{
 						hasPermission: () => true
@@ -24,10 +25,13 @@ describe('BasicAuthorizer', () => {
 				] as any
 			}
 		},
-		authBadRoles: BasicAuthZService<User, Role, Permission, AuthContext<User>> = {
-			getRolesFromAuthContext(
-				auth: AuthContext<User>
-			): Promise<Role[]> {
+		authBadRoles: BasicAuthZService<
+			User,
+			Role,
+			Permission,
+			AuthContext<User>
+		> = {
+			getRolesFromAuthContext(auth: AuthContext<User>): Promise<Role[]> {
 				return [
 					{
 						hasPermission: () => false

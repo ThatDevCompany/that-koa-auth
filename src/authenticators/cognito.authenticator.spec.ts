@@ -1,8 +1,12 @@
-import {CognitoAuthCredential, CognitoAuthenticator} from './cognito.authenticator'
+import {
+	CognitoAuthCredential,
+	CognitoAuthenticator
+} from './cognito.authenticator'
 import { CognitoAuthNService } from '@/authenticators/cognito.authenticator'
 import { User } from '@/types'
 import { expectAsyncToThrow } from 'that-koa-error'
 import { CognitoIdentity } from 'aws-sdk'
+import { AuthContext } from '@/authcontext'
 
 /**
  * CognitoAuthenticator
@@ -20,12 +24,7 @@ describe('CognitoAuthenticator', () => {
 	}
 
 	it('should be instantiable', async () => {
-		expect(new CognitoAuthenticator(auth)).toBeDefined()
-	})
-
-	it('should make a valid IdentityRequest', async () => {
-		const req = new CognitoAuthenticator(auth).makeIdentityRequest('abcd')
-		expect(req).toBeDefined()
+		expect(new CognitoAuthenticator(AuthContext, auth)).toBeDefined()
 	})
 })
 
@@ -57,13 +56,13 @@ describe('CognitoAuthenticator.authenticate', () => {
 
 	it('should handle nulls', async () => {
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(auth).generateAuthContext(null)
+			new CognitoAuthenticator(AuthContext, auth).userContext(null)
 		)
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(auth).generateAuthContext({})
+			new CognitoAuthenticator(AuthContext, auth).userContext({})
 		)
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(auth).generateAuthContext({
+			new CognitoAuthenticator(AuthContext, auth).userContext({
 				identity: '1234'
 			})
 		)
@@ -76,7 +75,7 @@ describe('CognitoAuthenticator.authenticate', () => {
 				cb('Error', null)
 			})
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(auth).generateAuthContext({
+			new CognitoAuthenticator(AuthContext, auth).userContext({
 				identity: 'abcd'
 			})
 		)
@@ -89,7 +88,7 @@ describe('CognitoAuthenticator.authenticate', () => {
 				cb(null, { IdentityId: '1234' })
 			})
 		await expectAsyncToThrow(() =>
-			new CognitoAuthenticator(authNoUsers).generateAuthContext({
+			new CognitoAuthenticator(AuthContext, authNoUsers).userContext({
 				identity: 'abcd'
 			})
 		)
@@ -101,7 +100,7 @@ describe('CognitoAuthenticator.authenticate', () => {
 			.and.callFake((id, cb) => {
 				cb(null, { IdentityId: '1234' })
 			})
-		const res = await new CognitoAuthenticator(auth).generateAuthContext({
+		const res = await new CognitoAuthenticator(AuthContext, auth).userContext({
 			identity: 'abcd'
 		})
 		expect(res).toBeDefined()

@@ -1,8 +1,11 @@
 import { FacebookAuthenticator } from './facebook.authenticator'
 import { AuthService } from '@/authservice'
 import { User } from '@/types'
-import {CognitoAuthCredential, CognitoAuthNService} from '@/authenticators/cognito.authenticator'
-import {AuthContext} from "@/authcontext";
+import {
+	CognitoAuthCredential,
+	CognitoAuthNService
+} from '@/authenticators/cognito.authenticator'
+import { AuthContext } from '@/authcontext'
 
 /**
  * FacebookAuthenticator
@@ -20,13 +23,6 @@ describe('FacebookAuthenticator', () => {
 	}
 
 	it('should be instantiable', async () => {
-		expect(new FacebookAuthenticator(auth)).toBeDefined()
-	})
-
-	it('should make a valid IdentityRequest', async () => {
-		const req = new FacebookAuthenticator(auth).makeIdentityRequest({
-			request: { body: { token: 'abcd' } }
-		})
-		expect(req).toBeDefined()
+		expect(new FacebookAuthenticator(AuthContext, auth)).toBeDefined()
 	})
 })
