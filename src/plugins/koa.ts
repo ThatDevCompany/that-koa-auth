@@ -1,6 +1,7 @@
 import { AuthContext } from '@/authcontext'
 import { AuthCredential, User } from '@/types'
 import { Authenticator } from '@/authenticator'
+import * as _ from 'lodash'
 
 /**
  * Koa Auth Credential Generator
@@ -12,9 +13,9 @@ export interface KoaCredGenerator<C extends AuthCredential> {
 export class BasicKoaCredGenerator implements KoaCredGenerator<AuthCredential> {
 	generateCredentialFromKoaContext(ctx: any): AuthCredential {
 		let identity = (
-			ctx.headers['x-api-key'] ||
-			ctx.headers['authorization'] ||
-			ctx.query.token ||
+			_.get(ctx, 'headers.x-api-key') ||
+			_.get(ctx, 'headers.authorization') ||
+			_.get(ctx, 'query.token') ||
 			''
 		)
 			.split('Basic ')
@@ -44,6 +45,11 @@ export function koaAuthN<
 			auth = await authenticator.userContext(
 				credGenerator.generateCredentialFromKoaContext(ctx)
 			)
+
+			// Null response safety
+			if (!auth) {
+				auth = await authenticator.guestContext()
+			}
 
 			// Catch Errors
 		} catch (e) {

@@ -19,14 +19,18 @@ export const ExampleAuthenticator: Authenticator<
 	AuthCredential,
 	AuthContext<User>
 > = {
+
+	// istanbul ignore next
 	async userContext(credential: AuthCredential): Promise<AuthContext<User>> {
 		return new AuthContext(AuthContextType.USER, {} as User, null)
 	},
 
+	// istanbul ignore next
 	async systemContext(): Promise<AuthContext<User>> {
 		return new AuthContext(AuthContextType.SYSTEM, null, null)
 	},
 
+	// istanbul ignore next
 	async guestContext(): Promise<AuthContext<User>> {
 		return new AuthContext(AuthContextType.GUEST, null, null)
 	}

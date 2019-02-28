@@ -11,6 +11,8 @@ export interface Authorizer<U extends User, A extends AuthContext<U>> {
 }
 
 export const ExampleAuthorizer: Authorizer<User, AuthContext<User>> = {
+
+	// istanbul ignore next
 	async authorize(
 		auth: AuthContext<User>,
 		permissions: Permission[]

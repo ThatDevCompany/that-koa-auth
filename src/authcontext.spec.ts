@@ -4,7 +4,7 @@ import { User } from '@/types'
 /**
  * Tests for Context
  */
-describe('Context', () => {
+describe('AuthContext', () => {
 	const testUser: User = { id: '1234' }
 	const userContext = new AuthContext(AuthContextType.USER, testUser)
 	const systemContext = new AuthContext(AuthContextType.SYSTEM)

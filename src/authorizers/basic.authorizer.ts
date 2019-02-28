@@ -1,4 +1,4 @@
-import { User, Permission, Role, Tenant } from '@/types'
+import { User, Permission, Role } from '@/types'
 import { AuthContext } from '@/authcontext'
 import { AuthService } from '@/authservice'
 import { Authorizer } from '@/authorizer'

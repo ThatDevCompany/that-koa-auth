@@ -52,7 +52,7 @@ describe('PasswordAuthenticator', () => {
 		const user = await new PasswordAuthenticator(AuthContext, auth).userContext(
 			{
 				identity: '1234',
-				passkey: 'abcd'
+				passkey: 'test'
 			}
 		)
 		expect(user).toBeDefined()

@@ -16,6 +16,7 @@ export class GoogleAuthenticator<
 	/**
 	 * Return the Indentity Request object
 	 */
+	// istanbul ignore next
 	protected makeIdentityRequest(ctx: any) {
 		const c = this.authNService.cognitoConfig
 

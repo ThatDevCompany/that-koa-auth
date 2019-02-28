@@ -90,6 +90,7 @@ export class CognitoAuthenticator<
 	/**
 	 * Return the Indentity Request object
 	 */
+	// istanbul ignore next
 	protected makeIdentityRequest(identity: string) {
 		const c = this.authNService.cognitoConfig
 

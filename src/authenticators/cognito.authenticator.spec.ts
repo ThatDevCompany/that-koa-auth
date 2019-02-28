@@ -105,4 +105,14 @@ describe('CognitoAuthenticator.authenticate', () => {
 		})
 		expect(res).toBeDefined()
 	})
+
+	it('should get guest contexts', async () => {
+		const res = await new CognitoAuthenticator(AuthContext, auth).guestContext()
+		expect(res).toBeDefined()
+	})
+
+	it('should get system contexts', async () => {
+		const res = await new CognitoAuthenticator(AuthContext, auth).systemContext()
+		expect(res).toBeDefined()
+	})
 })

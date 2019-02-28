@@ -30,7 +30,7 @@ export class oaiAuthZ<
 			if (
 				!(await authorizer.authorize(
 					ctx.auth,
-					fieldValue === true ? [] : fieldValue
+					fieldValue === true ? /* istanbul ignore next */ [] : fieldValue
 				))
 			) {
 				throw new AuthError(`Unauthorized access to ${endpoint}`)

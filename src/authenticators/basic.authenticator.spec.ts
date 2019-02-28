@@ -52,4 +52,14 @@ describe('TokenAuthenticator', () => {
 		})
 		expect(user).toBeDefined()
 	})
+
+	it('should get guest contexts', async () => {
+		const res = await new BasicAuthenticator(AuthContext, auth).guestContext()
+		expect(res).toBeDefined()
+	})
+
+	it('should get system contexts', async () => {
+		const res = await new BasicAuthenticator(AuthContext, auth).systemContext()
+		expect(res).toBeDefined()
+	})
 })
