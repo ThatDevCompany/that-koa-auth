@@ -1,14 +1,14 @@
-import { AuthContext, AuthContextType } from './authcontext'
+import { Context, ContextType } from './authcontext'
 import { User } from '@/types'
 
 /**
  * Tests for Context
  */
-describe('AuthContext', () => {
+describe('Context', () => {
 	const testUser: User = { id: '1234' }
-	const userContext = new AuthContext(AuthContextType.USER, testUser)
-	const systemContext = new AuthContext(AuthContextType.SYSTEM)
-	const guestContext = new AuthContext()
+	const userContext = new Context(ContextType.USER, testUser)
+	const systemContext = new Context(ContextType.SYSTEM)
+	const guestContext = new Context()
 
 	/**
 	 * General Tests

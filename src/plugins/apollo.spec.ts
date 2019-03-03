@@ -2,18 +2,18 @@ import { apolloAuthZ, apolloContext } from './apollo'
 import { expectAsyncToThrow } from 'that-koa-error'
 import { User } from '@/types'
 import { Authorizer } from '@/authorizer'
-import { AuthContext } from '@/authcontext'
+import { Context } from '@/authcontext'
 
 /**
  * Tests for apolloAuthZ
  */
 describe('apolloAuthZ', () => {
-	let auth: Authorizer<User, AuthContext<User>> = {
+	let auth: Authorizer<User, Context<User>> = {
 			async authorize() {
 				return Promise.resolve(true)
 			}
 		},
-		authFail: Authorizer<User, AuthContext<User>> = {
+		authFail: Authorizer<User, Context<User>> = {
 			async authorize() {
 				return Promise.resolve(false)
 			}

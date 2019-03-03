@@ -1,30 +1,25 @@
-import { AuthContext } from '@/authcontext'
-import { AuthCredential, User } from '@/types'
-import { Authenticator } from '@/authenticator'
+import * as C from '@/classes'
+import { VISAType } from '@/classes'
 import * as _ from 'lodash'
 
 /**
- * Koa Auth Credential Generator
+ * ctxToPassport
+ *
+ * Create a Passport from a Koa Context
  */
-export interface KoaCredGenerator<C extends AuthCredential> {
-	generateCredentialFromKoaContext(ctx: any): C
-}
-
-export class BasicKoaCredGenerator implements KoaCredGenerator<AuthCredential> {
-	generateCredentialFromKoaContext(ctx: any): AuthCredential {
-		let identity = (
-			_.get(ctx, 'headers.x-api-key') ||
-			_.get(ctx, 'headers.authorization') ||
-			_.get(ctx, 'query.token') ||
-			''
-		)
-			.split('Basic ')
-			.join('')
-			.split('Bearer ')
-			.join('')
-
-		return { identity } as AuthCredential
-	}
+export function ctxToPassport(ctx: any): C.Passport {
+	let p = new C.Passport()
+	p.identity = (
+		_.get(ctx, 'headers.x-api-key') ||
+		_.get(ctx, 'headers.authorization') ||
+		_.get(ctx, 'query.token') ||
+		''
+	)
+		.split('Basic ')
+		.join('')
+		.split('Bearer ')
+		.join('')
+	return p
 }
 
 /**
@@ -33,31 +28,33 @@ export class BasicKoaCredGenerator implements KoaCredGenerator<AuthCredential> {
  * Based on the AuthToken Id provided via request headers or the query string
  */
 export function koaAuthN<
-	U extends User,
-	C extends AuthCredential,
-	A extends AuthContext<U>
->(credGenerator: KoaCredGenerator<C>, authenticator: Authenticator<U, C, A>) {
+	U extends C.User,
+	P extends C.Passport,
+	V extends C.VISA<U>
+>(
+	VISA: C.VISAClass<U, V>,
+	ctxToPassport: (ctx: any) => P,
+	authenticate: (passport: P) => Promise<V>
+) {
 	return async (ctx, next) => {
-		let auth: A
+		let visa: V
 
 		// Attempt to Create Context from the Credentials Provided
 		try {
-			auth = await authenticator.userContext(
-				credGenerator.generateCredentialFromKoaContext(ctx)
-			)
+			visa = await authenticate(ctxToPassport(ctx))
 
 			// Null response safety
-			if (!auth) {
-				auth = await authenticator.guestContext()
+			if (!visa) {
+				visa = new VISA(VISAType.GUEST)
 			}
 
 			// Catch Errors
 		} catch (e) {
-			auth = await authenticator.guestContext()
+			visa = new VISA(VISAType.GUEST)
 		}
 
 		// Attach Context
-		ctx.auth = auth
+		ctx.visa = visa
 
 		// Carry on
 		return await next()

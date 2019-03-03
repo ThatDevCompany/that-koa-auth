@@ -1,5 +1,5 @@
 import { BasicKoaCredGenerator, KoaCredGenerator, koaAuthN } from './koa'
-import { AuthContext, AuthContextType } from '@/authcontext'
+import { Context, ContextType } from '@/authcontext'
 import { Authenticator } from '@/authenticator'
 import { AuthCredential, User } from '@/types'
 
@@ -7,39 +7,37 @@ import { AuthCredential, User } from '@/types'
  * Tests for Koa
  */
 describe('Koa', () => {
-	let noAuth: Authenticator<User, AuthCredential, AuthContext<User>> = {
-		async userContext(cred: AuthCredential): Promise<AuthContext<User>> {
+	let noAuth: Authenticator<User, AuthCredential, Context<User>> = {
+		async userContext(cred: AuthCredential): Promise<Context<User>> {
 			return null
 		},
-		async systemContext(): Promise<AuthContext<User>> {
-			return Promise.resolve(new AuthContext(AuthContextType.SYSTEM))
+		async systemContext(): Promise<Context<User>> {
+			return Promise.resolve(new Context(ContextType.SYSTEM))
 		},
-		async guestContext(): Promise<AuthContext<User>> {
-			return Promise.resolve(new AuthContext())
+		async guestContext(): Promise<Context<User>> {
+			return Promise.resolve(new Context())
 		}
 	}
-	let errorAuth: Authenticator<User, AuthCredential, AuthContext<User>> = {
-		async userContext(cred: AuthCredential): Promise<AuthContext<User>> {
+	let errorAuth: Authenticator<User, AuthCredential, Context<User>> = {
+		async userContext(cred: AuthCredential): Promise<Context<User>> {
 			throw new Error('sdfsdf')
 		},
-		async systemContext(): Promise<AuthContext<User>> {
-			return Promise.resolve(new AuthContext(AuthContextType.SYSTEM))
+		async systemContext(): Promise<Context<User>> {
+			return Promise.resolve(new Context(ContextType.SYSTEM))
 		},
-		async guestContext(): Promise<AuthContext<User>> {
-			return Promise.resolve(new AuthContext())
+		async guestContext(): Promise<Context<User>> {
+			return Promise.resolve(new Context())
 		}
 	}
-	let auth: Authenticator<User, AuthCredential, AuthContext<User>> = {
-		async userContext(cred: AuthCredential): Promise<AuthContext<User>> {
-			return Promise.resolve(
-				new AuthContext(AuthContextType.USER, { id: '1234' })
-			)
+	let auth: Authenticator<User, AuthCredential, Context<User>> = {
+		async userContext(cred: AuthCredential): Promise<Context<User>> {
+			return Promise.resolve(new Context(ContextType.USER, { id: '1234' }))
 		},
-		async systemContext(): Promise<AuthContext<User>> {
-			return Promise.resolve(new AuthContext(AuthContextType.SYSTEM))
+		async systemContext(): Promise<Context<User>> {
+			return Promise.resolve(new Context(ContextType.SYSTEM))
 		},
-		async guestContext(): Promise<AuthContext<User>> {
-			return Promise.resolve(new AuthContext())
+		async guestContext(): Promise<Context<User>> {
+			return Promise.resolve(new Context())
 		}
 	}
 	let koaAuthCredentialsGenerator: KoaCredGenerator<AuthCredential> = {
@@ -64,8 +62,8 @@ describe('Koa', () => {
 		const ctx = { headers: {}, query: {}, auth: null }
 		const next = jasmine.createSpy('next')
 		await test(ctx, next)
-		expect(ctx.auth).not.toBeNull()
-		expect(ctx.auth.isGuest).toBeTruthy()
+		expect(ctx.visa).not.toBeNull()
+		expect(ctx.visa.isGuest).toBeTruthy()
 		expect(next.calls.count()).toBe(1)
 	})
 
@@ -74,8 +72,8 @@ describe('Koa', () => {
 		const ctx = { headers: {}, query: {}, auth: null }
 		const next = jasmine.createSpy('next')
 		await test(ctx, next)
-		expect(ctx.auth).not.toBeNull()
-		expect(ctx.auth.isGuest).toBeTruthy()
+		expect(ctx.visa).not.toBeNull()
+		expect(ctx.visa.isGuest).toBeTruthy()
 		expect(next.calls.count()).toBe(1)
 	})
 
@@ -84,8 +82,8 @@ describe('Koa', () => {
 		const ctx = { headers: {}, query: {}, auth: null }
 		const next = jasmine.createSpy('next')
 		await test(ctx, next)
-		expect(ctx.auth).toBeDefined()
-		expect(ctx.auth.isUser).toBeTruthy()
+		expect(ctx.visa).toBeDefined()
+		expect(ctx.visa.isUser).toBeTruthy()
 		expect(next.calls.count()).toBe(1)
 	})
 })
@@ -94,7 +92,6 @@ describe('Koa', () => {
  * BasicKoaCredGenerator
  */
 describe('BasicKoaCredGenerator', () => {
-
 	it('should be instantiable', () => {
 		let x = new BasicKoaCredGenerator()
 		expect(x).toBeDefined()
@@ -104,21 +101,28 @@ describe('BasicKoaCredGenerator', () => {
 		let x = new BasicKoaCredGenerator(),
 			identity = 'identity'
 
-		expect(x.generateCredentialFromKoaContext({
-			headers: { 'x-api-key': identity }
-		})).toEqual({ identity })
+		expect(
+			x.generateCredentialFromKoaContext({
+				headers: { 'x-api-key': identity }
+			})
+		).toEqual({ identity })
 
-		expect(x.generateCredentialFromKoaContext({
-			headers: { 'authorization': 'Bearer ' + identity }
-		})).toEqual({ identity })
+		expect(
+			x.generateCredentialFromKoaContext({
+				headers: { authorization: 'Bearer ' + identity }
+			})
+		).toEqual({ identity })
 
-		expect(x.generateCredentialFromKoaContext({
-			headers: { 'authorization': 'Basic ' + identity }
-		})).toEqual({ identity })
+		expect(
+			x.generateCredentialFromKoaContext({
+				headers: { authorization: 'Basic ' + identity }
+			})
+		).toEqual({ identity })
 
-		expect(x.generateCredentialFromKoaContext({
-			query: { token: identity }
-		})).toEqual({ identity })
+		expect(
+			x.generateCredentialFromKoaContext({
+				query: { token: identity }
+			})
+		).toEqual({ identity })
 	})
-
 })

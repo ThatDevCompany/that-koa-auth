@@ -1,20 +1,19 @@
-import { Authorizer } from '@/authorizer'
-import { AuthContext } from '@/authcontext'
 import { AuthError } from '@/errors'
-import { User } from '@/types'
+import * as C from '@/classes'
 
 /**
  * Wrappers a Resolver with AuthZ
  */
-export function apolloAuthZ<U extends User, A extends AuthContext<U>>(
-	authorizer: Authorizer<U, A>,
-	fnc: (a, b, c) => any
+export function apolloAuthZ<U extends C.User, V extends C.VISA<U>>(
+	authorize: (visa: V, ...args) => Promise<boolean>,
+	fnc: (a, b, c) => any,
+	...args
 ) {
-	return async (x, y, auth) => {
-		if (!authorizer || !(await authorizer.authorize(auth, []))) {
+	return async (x, y, visa) => {
+		if (!authorize || !(await authorize(visa, args))) {
 			throw new AuthError('Unauthorized Access')
 		}
-		return fnc(x, y, auth)
+		return fnc(x, y, visa)
 	}
 }
 
@@ -23,5 +22,5 @@ export function apolloAuthZ<U extends User, A extends AuthContext<U>>(
  * into the resolvers for later AuthZ
  */
 export function apolloContext() {
-	return ({ ctx }) => ctx.auth
+	return ({ ctx }) => ctx.visa
 }
